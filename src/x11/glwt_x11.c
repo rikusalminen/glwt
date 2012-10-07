@@ -42,6 +42,8 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
         return -1;
     }
 
+    glwt.x11.screen_num = DefaultScreen(glwt.x11.display);
+
 #ifdef GLWT_USE_EGL
     if(glwtInitEGL(config) != 0)
 #else
@@ -49,8 +51,15 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
 #endif
         goto error;
 
+    glwt.x11.colormap = XCreateColormap(
+        glwt.x11.display,
+        RootWindow(glwt.x11.display, glwt.x11.screen_num),
+        glwt.x11.visual_info.visual,
+        AllocNone);
+
     return 0;
 error:
+    XFreeColormap(glwt.x11.display, glwt.x11.colormap);
     XCloseDisplay(glwt.x11.display);
     return -1;
 }
@@ -63,5 +72,6 @@ void glwtQuit()
     glwtQuitGLX();
 #endif
 
+    XFreeColormap(glwt.x11.display, glwt.x11.colormap);
     XCloseDisplay(glwt.x11.display);
 }

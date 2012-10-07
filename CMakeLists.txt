@@ -20,6 +20,10 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_subdirectory(ext)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/glxw/include)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/glxw)
+
 set(GLWT_DEPENDENCY_LIBRARIES)
 mark_as_advanced(GLWT_DEPENDENCY_LIBRARIES)
 add_subdirectory(src)
