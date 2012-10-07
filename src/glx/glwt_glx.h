@@ -5,4 +5,7 @@ struct glwt_glx
 {
 };
 
+int glwtInitGLX(const GLWTConfig *config);
+void glwtQuitGLX();
+
 #endif
