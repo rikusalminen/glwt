@@ -31,6 +31,9 @@ struct glwt
 {
     GLWTAppCallbacks app_callbacks;
 
+    int api;
+    int api_version_major, api_version_minor;
+
 #if defined(WIN32)
     struct glwt_win32 win32;
     #ifndef GLWT_USE_EGL

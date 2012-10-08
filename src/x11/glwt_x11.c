@@ -54,7 +54,7 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
     glwt.x11.colormap = XCreateColormap(
         glwt.x11.display,
         RootWindow(glwt.x11.display, glwt.x11.screen_num),
-        glwt.x11.visual_info.visual,
+        glwt.x11.visual,
         AllocNone);
 
     return 0;
