@@ -5,12 +5,19 @@
 static void error_callback(const char *msg, void *userdata)
 {
     (void)userdata;
-    fputs(msg, stderr);
+    fprintf(stderr, "%s\n", msg);
+}
+
+static void close_callback(GLWTWindow *window, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Window closed\n");
 }
 
 int main(int argc, char *argv[])
 {
     (void)argc; (void)argv;
+    int err = -1;
 
     GLWTConfig glwt_config = {
         .red_bits = 0,
@@ -32,9 +39,20 @@ int main(int argc, char *argv[])
     };
 
     if(glwtInit(&glwt_config, &app_callbacks) != 0)
-        return -1;
+        goto error;
 
+    GLWTWindowCallbacks win_callbacks = {
+        .close_callback = close_callback,
+        .userdata = 0
+    };
+
+    GLWTWindow *window = 0;
+    if(!(window = glwtWindowCreate("", 400, 300, &win_callbacks, 0)))
+        goto error;
+
+    err = 0;
+error:
+    glwtWindowDestroy(window);
     glwtQuit();
-
-    return 0;
+    return err;
 }

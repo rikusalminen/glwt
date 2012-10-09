@@ -9,7 +9,16 @@ struct glwt_glx
     GLXFBConfig fbconfig;
 };
 
+struct glwt_window_glx
+{
+    GLXWindow surface;
+    GLXContext context;
+};
+
 int glwtInitGLX(const GLWTConfig *config);
 void glwtQuitGLX();
+
+int glwtWindowCreateGLX(GLWTWindow *win, GLWTWindow *share);
+void glwtWindowDestroyGLX(GLWTWindow *win);
 
 #endif

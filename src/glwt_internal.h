@@ -54,6 +54,28 @@ struct glwt
 
 extern struct glwt glwt;
 
+struct GLWTWindow
+{
+    GLWTWindowCallbacks win_callbacks;
+
+#if defined(WIN32)
+    struct glwt_window_win32 win32;
+    #ifndef GLWT_USE_EGL
+    struct glwt_window_wgl wgl;
+    #endif
+#elif defined(__APPLE__)
+    struct glwt_window_osx osx;
+#else
+    struct glwt_window_x11 x11;
+    #ifndef GLWT_USE_EGL
+    struct glwt_window_glx glx;
+    #endif
+#endif
+#ifdef GLWT_USE_EGL
+    struct glwt_window_egl egl;
+#endif
+};
+
 int glwtErrorPrintf(const char *fmt, ...);
 
 #ifdef __cplusplus

@@ -31,8 +31,23 @@ typedef struct GLWTAppCallbacks
     void* userdata;
 } GLWTAppCallbacks;
 
+typedef struct GLWTWindow GLWTWindow;
+
+typedef struct GLWTWindowCallbacks
+{
+    void (*close_callback)(GLWTWindow *window, void *userdata);
+    void* userdata;
+} GLWTWindowCallbacks;
+
 int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks);
 void glwtQuit();
+
+GLWTWindow *glwtWindowCreate(
+    const char *title,
+    int width, int height,
+    const GLWTWindowCallbacks *win_callbacks,
+    GLWTWindow *share);
+void glwtWindowDestroy(GLWTWindow *window);
 
 #ifdef __cplusplus
 }

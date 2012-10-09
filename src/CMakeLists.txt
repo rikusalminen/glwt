@@ -18,10 +18,16 @@ else()
     list(APPEND GLWT_DEPENDENCY_LIBRARIES ${X11_LIBRARIES})
     include_directories(${X11_X11_INCLUDE_PATH})
 
-    list(APPEND GLWT_SOURCES x11/glwt_x11.c)
+    list(APPEND GLWT_SOURCES
+        x11/glwt_x11.c
+        x11/window.c
+        )
 
     if(NOT GLWT_USE_EGL)
-        list(APPEND GLWT_SOURCES glx/glwt_glx.c)
+        list(APPEND GLWT_SOURCES
+            glx/glwt_glx.c
+            glx/window.c
+            )
         list(APPEND GLWT_DEPENDENCY_LIBRARIES glxw_glx)
     endif()
 

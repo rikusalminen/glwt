@@ -24,7 +24,7 @@ int glwtInitGLX(const GLWTConfig *config)
     glXQueryVersion(glwt.x11.display, &glwt.glx.version_major, &glwt.glx.version_minor);
     // Required: GLX version 1.4, GL_ARB_create_context, GL_ARB_create_context_profile
 
-    const int config_attribs[] = {
+    const int fbconfig_attribs[] = {
         GLX_DOUBLEBUFFER, 1,
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -43,7 +43,7 @@ int glwtInitGLX(const GLWTConfig *config)
     GLXFBConfig *fbconfigs = glXChooseFBConfig(
         glwt.x11.display,
         glwt.x11.screen_num,
-        config_attribs,
+        fbconfig_attribs,
         &num_fbconfigs);
 
     if(!fbconfigs)
@@ -68,6 +68,7 @@ int glwtInitGLX(const GLWTConfig *config)
         glwtErrorPrintf("glXGetVisualFromFBConfig failed");
         return -1;
     }
+
     glwt.x11.visual = vi->visual;
     glwt.x11.depth = vi->depth;
     XFree(vi);

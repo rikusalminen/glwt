@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include <GLWT/glwt.h>
 #include <glwt_internal.h>
@@ -19,9 +20,9 @@ static int xlib_error(Display *display, XErrorEvent *event)
     char buffer[buffer_size];
     XGetErrorText(display, event->error_code, buffer, buffer_size);
 
-    glwtErrorPrintf("Xlib error code: %d  request: %d  message: %s\n",
+    glwtErrorPrintf("Xlib error code: %d  major: %d  minor: %d  message: %s",
         event->error_code,
-        event->request_code,
+        event->request_code, event->minor_code,
         buffer);
     return 0;
 }
@@ -38,7 +39,7 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
 
     if((glwt.x11.display = XOpenDisplay(NULL)) == NULL)
     {
-        glwtErrorPrintf("Can't open display");
+        glwtErrorPrintf("XOpenDisplay failed");
         return -1;
     }
 
@@ -51,16 +52,19 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
 #endif
         goto error;
 
-    glwt.x11.colormap = XCreateColormap(
+    if((glwt.x11.colormap = XCreateColormap(
         glwt.x11.display,
         RootWindow(glwt.x11.display, glwt.x11.screen_num),
         glwt.x11.visual,
-        AllocNone);
+        AllocNone)) == 0)
+    {
+        glwtErrorPrintf("XCreateColormap failed");
+        goto error;
+    }
 
     return 0;
 error:
-    XFreeColormap(glwt.x11.display, glwt.x11.colormap);
-    XCloseDisplay(glwt.x11.display);
+    glwtQuit();
     return -1;
 }
 
@@ -72,6 +76,12 @@ void glwtQuit()
     glwtQuitGLX();
 #endif
 
-    XFreeColormap(glwt.x11.display, glwt.x11.colormap);
-    XCloseDisplay(glwt.x11.display);
+    if(glwt.x11.display)
+    {
+        if(glwt.x11.colormap)
+            XFreeColormap(glwt.x11.display, glwt.x11.colormap);
+        XCloseDisplay(glwt.x11.display);
+    }
+
+    memset(&glwt, 0, sizeof(struct glwt));
 }

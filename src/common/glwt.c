@@ -21,7 +21,7 @@ int glwtErrorPrintf(const char *fmt, ...)
     if(glwt.app_callbacks.error_callback)
         glwt.app_callbacks.error_callback(buffer, glwt.app_callbacks.userdata);
     else
-        fputs(buffer, stderr);
+        fprintf(stderr, "%s\n", buffer);
 
     return val;
 }

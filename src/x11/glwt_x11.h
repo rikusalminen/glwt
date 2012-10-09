@@ -13,4 +13,9 @@ struct glwt_x11
     Colormap colormap;
 };
 
+struct glwt_window_x11
+{
+    Window window;
+};
+
 #endif
