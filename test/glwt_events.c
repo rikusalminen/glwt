@@ -50,6 +50,14 @@ int main(int argc, char *argv[])
     if(!(window = glwtWindowCreate("", 400, 300, &win_callbacks, 0)))
         goto error;
 
+    glwtWindowShow(window, 1);
+
+    while(!glwtWindowClosed(window))
+    {
+        if(glwtEventHandle(1) != 0)
+            goto error;
+    }
+
     err = 0;
 error:
     glwtWindowDestroy(window);

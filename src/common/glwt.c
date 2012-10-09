@@ -25,3 +25,9 @@ int glwtErrorPrintf(const char *fmt, ...)
 
     return val;
 }
+
+int glwtWindowClosed(GLWTWindow *window)
+{
+    (void)window;
+    return 0; // TODO: figure out show this should work!
+}

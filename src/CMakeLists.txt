@@ -21,6 +21,7 @@ else()
     list(APPEND GLWT_SOURCES
         x11/glwt_x11.c
         x11/window.c
+        x11/events.c
         )
 
     if(NOT GLWT_USE_EGL)

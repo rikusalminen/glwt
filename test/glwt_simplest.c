@@ -9,6 +9,15 @@ int main(int argc, char *argv[])
         !(window = glwtWindowCreate("", 400, 300, 0, 0)))
         goto error;
 
+    glwtWindowShow(window, 1);
+
+    while(!glwtWindowClosed(window)
+        && glwtEventHandle(1) == 0)
+    {
+    }
+
+    glwtWindowShow(window, 0);
+
 error:
     glwtWindowDestroy(window);
     glwtQuit();

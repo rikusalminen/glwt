@@ -61,3 +61,11 @@ void glwtWindowDestroy(GLWTWindow *win)
 
     free(win);
 }
+
+void glwtWindowShow(GLWTWindow *win, int show)
+{
+    if(show)
+        XMapRaised(glwt.x11.display, win->x11.window);
+    else
+        XUnmapWindow(glwt.x11.display, win->x11.window);
+}

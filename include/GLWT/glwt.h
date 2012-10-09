@@ -49,6 +49,11 @@ GLWTWindow *glwtWindowCreate(
     GLWTWindow *share);
 void glwtWindowDestroy(GLWTWindow *window);
 
+int glwtWindowClosed(GLWTWindow *window);
+void glwtWindowShow(GLWTWindow *window, int show);
+
+int glwtEventHandle(int wait);
+
 #ifdef __cplusplus
 }
 #endif
