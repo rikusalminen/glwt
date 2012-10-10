@@ -11,10 +11,19 @@ static int xlib_handle_event()
     while(XCheckMaskEvent(glwt.x11.display, ~0, &event) ||
         XCheckTypedEvent(glwt.x11.display, ClientMessage, &event))
     {
+        GLWTWindow *win = 0;
+        if(XFindContext(glwt.x11.display, event.xany.window, glwt.x11.xcontext, (XPointer*)&win) != 0 ||
+            !win)
+        {
+            glwtErrorPrintf("XFindContext window not found");
+            return -1;
+        }
+
         switch(event.type)
         {
             case KeyPress:
                 glwtErrorPrintf("KEYPRESS!!!1!");
+                win->closed = 1;
                 break;
             default:
                 break;

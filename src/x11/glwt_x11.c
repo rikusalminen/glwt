@@ -37,6 +37,8 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
     XSetIOErrorHandler(xlib_io_error);
     XSetErrorHandler(xlib_error);
 
+    glwt.x11.xcontext = XUniqueContext();
+
     if((glwt.x11.display = XOpenDisplay(NULL)) == NULL)
     {
         glwtErrorPrintf("XOpenDisplay failed");

@@ -57,6 +57,7 @@ extern struct glwt glwt;
 struct GLWTWindow
 {
     GLWTWindowCallbacks win_callbacks;
+    int closed;
 
 #if defined(WIN32)
     struct glwt_window_win32 win32;

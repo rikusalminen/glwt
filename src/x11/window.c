@@ -39,6 +39,12 @@ GLWTWindow *glwtWindowCreate(
 #endif
         goto error;
 
+    if(XSaveContext(glwt.x11.display, win->x11.window, glwt.x11.xcontext, (XPointer)win) != 0)
+    {
+        glwtErrorPrintf("XSaveContext failed");
+        goto error;
+    }
+
     return win;
 error:
     glwtWindowDestroy(win);
@@ -49,6 +55,9 @@ void glwtWindowDestroy(GLWTWindow *win)
 {
     if(!win)
         return;
+
+    if(XDeleteContext(glwt.x11.display, win->x11.window, glwt.x11.xcontext) != 0)
+        glwtErrorPrintf("XDeleteContext failed");
 
 #ifdef GLWT_USE_EGL
     glwtWindowDestroyEGL(win);
