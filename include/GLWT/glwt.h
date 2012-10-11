@@ -52,6 +52,10 @@ void glwtWindowDestroy(GLWTWindow *window);
 int glwtWindowClosed(GLWTWindow *window);
 void glwtWindowShow(GLWTWindow *window, int show);
 
+void glwtMakeCurrent(GLWTWindow *win);
+void glwtSwapBuffers(GLWTWindow *win);
+void glwtSwapInterval(GLWTWindow *win, int interval);
+
 int glwtEventHandle(int wait);
 
 #ifdef __cplusplus

@@ -5,7 +5,6 @@
 
 struct glwt_glx
 {
-    int version_major, version_minor;
     GLXFBConfig fbconfig;
 };
 

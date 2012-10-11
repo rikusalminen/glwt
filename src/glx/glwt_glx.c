@@ -1,7 +1,38 @@
+#include <string.h>
+
 #include <GL/glx.h>
 
 #include <GLWT/glwt.h>
 #include <glwt_internal.h>
+
+static int supportedGLXExtension(const char *ext)
+{
+    const char *extensions = glXQueryExtensionsString(glwt.x11.display, glwt.x11.screen_num);
+    return strstr(extensions, ext) != 0;
+}
+
+static int requireGLXExtension(const char *ext)
+{
+    if(supportedGLXExtension(ext))
+        return 1;
+    glwtErrorPrintf("Required GLX extension missing: %s", ext);
+    return 0;
+}
+
+static int requireGLXVersion(int req_major, int req_minor)
+{
+    int major, minor;
+    glXQueryVersion(glwt.x11.display, &major, &minor);
+
+    if(major < req_major || (major == req_major && minor < req_minor))
+    {
+        glwtErrorPrintf("GLX version %d.%d required. GLX version %d.%d found.",
+            req_major, req_minor, major, minor);
+        return 0;
+    }
+
+    return 1;
+}
 
 int glwtInitGLX(const GLWTConfig *config)
 {
@@ -21,8 +52,11 @@ int glwtInitGLX(const GLWTConfig *config)
         return -1;
     }
 
-    glXQueryVersion(glwt.x11.display, &glwt.glx.version_major, &glwt.glx.version_minor);
-    // Required: GLX version 1.4, GL_ARB_create_context, GL_ARB_create_context_profile
+    if(!requireGLXVersion(1, 4) ||
+        !requireGLXExtension("GLX_ARB_create_context") ||
+        !requireGLXExtension("GLX_ARB_create_context_profile") ||
+        !requireGLXExtension("GLX_EXT_swap_control"))
+        return -1;
 
     const int fbconfig_attribs[] = {
         GLX_DOUBLEBUFFER, 1,

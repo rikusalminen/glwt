@@ -48,3 +48,25 @@ void glwtWindowDestroyGLX(GLWTWindow *win)
     if(win->glx.context)
         glXDestroyContext(glwt.x11.display, win->glx.context);
 }
+
+void glwtMakeCurrent(GLWTWindow *win)
+{
+    if(win)
+        glXMakeContextCurrent(
+            glwt.x11.display,
+            win->glx.surface,
+            win->glx.surface,
+            win->glx.context);
+    else
+        glXMakeContextCurrent(glwt.x11.display, 0, 0, 0);
+}
+
+void glwtSwapBuffers(GLWTWindow *win)
+{
+    glXSwapBuffers(glwt.x11.display, win->glx.surface);
+}
+
+void glwtSwapInterval(GLWTWindow *win, int interval)
+{
+    glXSwapIntervalEXT(glwt.x11.display, win->glx.surface, interval);
+}

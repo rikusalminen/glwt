@@ -51,11 +51,15 @@ int main(int argc, char *argv[])
         goto error;
 
     glwtWindowShow(window, 1);
+    glwtMakeCurrent(window);
+    glwtSwapInterval(window, 1);
 
     while(!glwtWindowClosed(window))
     {
         if(glwtEventHandle(1) != 0)
             goto error;
+
+        glwtSwapBuffers(window);
     }
 
     err = 0;
