@@ -27,6 +27,25 @@ static int xlib_error(Display *display, XErrorEvent *event)
     return 0;
 }
 
+static int init_x11_atoms()
+{
+    char *atom_names[] = {
+#define GLWT_X11_ATOM_NAME(X) #X,
+        GLWT_X11_ATOMS(GLWT_X11_ATOM_NAME)
+#undef GLWT_X11_ATOM_NAME
+    };
+
+    int num_atoms = sizeof(atom_names)/sizeof(*atom_names);
+
+    if(XInternAtoms(glwt.x11.display, atom_names, num_atoms, False, (Atom*)&glwt.x11.atoms) == 0)
+    {
+        glwtErrorPrintf("XInternAtoms failed");
+        return -1;
+    }
+
+    return 0;
+}
+
 int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
 {
     if(app_callbacks)
@@ -46,6 +65,9 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
     }
 
     glwt.x11.screen_num = DefaultScreen(glwt.x11.display);
+
+    if(init_x11_atoms() != 0)
+        goto error;
 
 #ifdef GLWT_USE_EGL
     if(glwtInitEGL(config) != 0)

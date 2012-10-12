@@ -23,7 +23,23 @@ static int xlib_handle_event()
         {
             case KeyPress:
                 glwtErrorPrintf("KEYPRESS!!!1!");
-                win->closed = 1;
+                break;
+            case ClientMessage:
+                if((Atom)event.xclient.data.l[0] == glwt.x11.atoms.WM_DELETE_WINDOW)
+                {
+                    if(win->win_callbacks.close_callback)
+                        win->win_callbacks.close_callback(win, win->win_callbacks.userdata);
+                    win->closed = 1;
+                } else if((Atom)event.xclient.data.l[0] == glwt.x11.atoms._NET_WM_PING)
+                {
+                    event.xclient.window = RootWindow(glwt.x11.display, glwt.x11.screen_num);
+                    XSendEvent(
+                        glwt.x11.display,
+                        event.xclient.window,
+                        False,
+                       SubstructureNotifyMask | SubstructureRedirectMask,
+                       &event);
+                }
                 break;
             default:
                 break;

@@ -5,6 +5,11 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
+#define GLWT_X11_ATOMS(ATOM) \
+    ATOM(_NET_SUPPORTED) \
+    ATOM(WM_DELETE_WINDOW) \
+    ATOM(_NET_WM_PING)
+
 struct glwt_x11
 {
     Display *display;
@@ -14,6 +19,13 @@ struct glwt_x11
     int depth;
     int visual_id;
     Colormap colormap;
+
+    struct
+    {
+#define GLWT_X11_ATOM_DECLARE(X) Atom X;
+        GLWT_X11_ATOMS(GLWT_X11_ATOM_DECLARE)
+#undef GLWT_X11_ATOM_DECLARE
+    } atoms;
 };
 
 struct glwt_window_x11

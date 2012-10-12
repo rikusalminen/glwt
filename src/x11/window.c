@@ -32,6 +32,17 @@ GLWTWindow *glwtWindowCreate(
         attrib_mask,
         &attrib);
 
+    Atom protocols[] = {
+        glwt.x11.atoms.WM_DELETE_WINDOW,
+        glwt.x11.atoms._NET_WM_PING,
+    };
+    int num_protocols = sizeof(protocols)/sizeof(*protocols);
+    if(XSetWMProtocols(glwt.x11.display, win->x11.window, protocols, num_protocols) == 0)
+    {
+        glwtErrorPrintf("XSetWMProtocols failed");
+        goto error;
+    }
+
 #ifdef GLWT_USE_EGL
     if(glwtWindowCreateEGL(win, share) != 0)
 #else
