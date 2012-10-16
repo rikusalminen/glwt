@@ -41,7 +41,7 @@ static void focus_callback(GLWTWindow *window, int focus, void *userdata)
 static void key_callback(GLWTWindow *window, int down, int keysym, int scancode, int mod, void *userdata)
 {
     (void)window; (void)userdata;
-    printf("Key %s  keysym: %d  scancode: %d  mod: %X\n", down ? "down" : "up", keysym, scancode, mod);
+    printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n", down ? "down" : "up", keysym, scancode, mod);
 }
 
 static void motion_callback(GLWTWindow *window, int x, int y, int buttons, void *userdata)

@@ -1,6 +1,8 @@
 #ifndef GLWT_glwt_h
 #define GLWT_glwt_h
 
+#include <GLWT/glwt_keysym.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -51,8 +51,10 @@ static int xlib_handle_event()
                     win->win_callbacks.key_callback(
                         win,
                         event.type == KeyPress,
-                        0, // TODO: keysym
-                        0, // TODO: scancode
+                        keymap_lookup(
+                            &glwt.x11.keymap,
+                            XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0)),
+                        event.xkey.keycode,
                         0, // TODO: mod
                         win->win_callbacks.userdata);
                 break;

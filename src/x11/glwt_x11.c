@@ -51,6 +51,8 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
     if(app_callbacks)
         glwt.app_callbacks = *app_callbacks;
 
+    keymap_init(&glwt.x11.keymap);
+
     XInitThreads();
 
     XSetIOErrorHandler(xlib_io_error);
@@ -65,6 +67,14 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
     }
 
     glwt.x11.screen_num = DefaultScreen(glwt.x11.display);
+
+    int xkb_major = XkbMajorVersion, xkb_minor = XkbMinorVersion;
+    int xkb_opcode = -1, xkb_event = -1, xkb_error = -1;
+    if(!XkbQueryExtension(glwt.x11.display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_major, &xkb_minor))
+    {
+        glwtErrorPrintf("Xkb extension missing");
+        goto error;
+    }
 
     if(init_x11_atoms() != 0)
         goto error;
