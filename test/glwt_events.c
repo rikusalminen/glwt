@@ -14,6 +14,54 @@ static void close_callback(GLWTWindow *window, void *userdata)
     printf("Window closed\n");
 }
 
+static void expose_callback(GLWTWindow *window, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Window exposed\n");
+}
+
+static void resize_callback(GLWTWindow *window, int width, int height, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Window resized  width: %d  height: %d\n", width, height);
+}
+
+static void show_callback(GLWTWindow *window, int show, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Window %s\n", show ? "show" : "hide");
+}
+
+static void focus_callback(GLWTWindow *window, int focus, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Window focus %s\n", focus ? "got" : "lost");
+}
+
+static void key_callback(GLWTWindow *window, int down, int keysym, int scancode, int mod, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Key %s  keysym: %d  scancode: %d  mod: %X\n", down ? "down" : "up", keysym, scancode, mod);
+}
+
+static void motion_callback(GLWTWindow *window, int x, int y, int buttons, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Motion  x: %d  y: %d  buttons: %X\n", x, y, buttons);
+}
+
+static void button_callback(GLWTWindow *window, int down, int x, int y, int button, int mod, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n", down ? "down" : "up", x, y, button, mod);
+}
+
+static void mouseover_callback(GLWTWindow *window, int enter, void *userdata)
+{
+    (void)window; (void)userdata;
+    printf("Mouse %s\n", enter ? "enter" : "leave");
+}
+
 int main(int argc, char *argv[])
 {
     (void)argc; (void)argv;
@@ -43,6 +91,14 @@ int main(int argc, char *argv[])
 
     GLWTWindowCallbacks win_callbacks = {
         .close_callback = close_callback,
+        .expose_callback = expose_callback,
+        .resize_callback = resize_callback,
+        .show_callback = show_callback,
+        .focus_callback = focus_callback,
+        .key_callback = key_callback,
+        .motion_callback = motion_callback,
+        .button_callback = button_callback,
+        .mouseover_callback = mouseover_callback,
         .userdata = 0
     };
 

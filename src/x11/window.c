@@ -18,7 +18,17 @@ GLWTWindow *glwtWindowCreate(
 
     XSetWindowAttributes attrib;
     attrib.colormap = glwt.x11.colormap;
-    attrib.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask;
+    attrib.event_mask = 0
+        | StructureNotifyMask
+        | PointerMotionMask
+        | ButtonPressMask
+        | ButtonReleaseMask
+        | KeyPressMask
+        | KeyReleaseMask
+        | EnterWindowMask
+        | LeaveWindowMask
+        | FocusChangeMask
+        | ExposureMask;
     unsigned long attrib_mask = CWColormap | CWEventMask;
 
     win->x11.window = XCreateWindow(
@@ -88,4 +98,5 @@ void glwtWindowShow(GLWTWindow *win, int show)
         XMapRaised(glwt.x11.display, win->x11.window);
     else
         XUnmapWindow(glwt.x11.display, win->x11.window);
+    XFlush(glwt.x11.display);
 }

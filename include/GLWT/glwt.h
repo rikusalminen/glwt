@@ -36,6 +36,14 @@ typedef struct GLWTWindow GLWTWindow;
 typedef struct GLWTWindowCallbacks
 {
     void (*close_callback)(GLWTWindow *window, void *userdata);
+    void (*expose_callback)(GLWTWindow *window, void *userdata);
+    void (*resize_callback)(GLWTWindow *window, int width, int height, void *userdata);
+    void (*show_callback)(GLWTWindow *window, int show, void *userdata);
+    void (*focus_callback)(GLWTWindow *window, int focus, void *userdata);
+    void (*key_callback)(GLWTWindow *window, int down, int keysym, int scancode, int mod, void *userdata);
+    void (*motion_callback)(GLWTWindow *window, int x, int y, int buttons, void *userdata);
+    void (*button_callback)(GLWTWindow *window, int down, int x, int y, int button, int mod, void *userdata);
+    void (*mouseover_callback)(GLWTWindow *window, int enter, void *userdata);
     void* userdata;
 } GLWTWindowCallbacks;
 
