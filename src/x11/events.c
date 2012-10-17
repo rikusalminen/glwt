@@ -4,6 +4,29 @@
 
 #include <glwt_internal.h>
 
+static int mapKeyMod(unsigned int state)
+{
+    // TODO: What to do with Mod3Mask?
+    return 0
+        | ((state & ShiftMask) ? GLWT_MOD_SHIFT : 0)
+        | ((state & ControlMask) ? GLWT_MOD_CTRL : 0)
+        | ((state & Mod1Mask) ? GLWT_MOD_ALT : 0)
+        | ((state & Mod4Mask) ? GLWT_MOD_SUPER : 0)
+        | ((state & Mod5Mask) ? GLWT_MOD_ALTGR : 0)
+        | ((state & Mod2Mask) ? GLWT_MOD_NUM_LOCK : 0)
+        | ((state & LockMask) ? GLWT_MOD_CAPS_LOCK : 0);
+}
+
+static int mapButtons(unsigned int state)
+{
+    return 0
+        | ((state & Button1Mask) ? (1 << 0) : 0)
+        | ((state & Button2Mask) ? (1 << 1) : 0)
+        | ((state & Button3Mask) ? (1 << 2) : 0)
+        | ((state & Button4Mask) ? (1 << 3) : 0)
+        | ((state & Button5Mask) ? (1 << 4) : 0);
+}
+
 static int xlib_handle_event()
 {
     XEvent event;
@@ -55,7 +78,7 @@ static int xlib_handle_event()
                             &glwt.x11.keymap,
                             XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0)),
                         event.xkey.keycode,
-                        0, // TODO: mod
+                        mapKeyMod(event.xkey.state),
                         win->win_callbacks.userdata);
                 break;
             case FocusIn:
@@ -74,7 +97,7 @@ static int xlib_handle_event()
                         event.type == ButtonPress,
                         event.xbutton.x, event.xbutton.y,
                         event.xbutton.button, // TODO: make these consistent on different platforms
-                        0, // TODO: mod
+                        mapKeyMod(event.xbutton.state),
                         win->win_callbacks.userdata);
                 break;
             case MotionNotify:
@@ -82,7 +105,7 @@ static int xlib_handle_event()
                     win->win_callbacks.motion_callback(
                         win,
                         event.xmotion.x, event.xmotion.y,
-                        0, // TODO: buttons
+                        mapButtons(event.xmotion.state),
                         win->win_callbacks.userdata);
                 break;
             case EnterNotify:
