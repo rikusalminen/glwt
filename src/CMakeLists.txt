@@ -9,7 +9,20 @@ if(WIN32)
     endif()
 
 elseif (APPLE)
-    list(APPEND GLWT_SOURCES osx/glwt_osx.c)
+    list(APPEND GLWT_SOURCES
+        osx/glwt_osx.m
+        osx/application.m
+        osx/window.m
+        )
+
+    # For some reason, CMake doesn't know about .m
+    set_source_files_properties(${GLWT_SOURCES} PROPERTIES LANGUAGE C)
+
+    find_library(COCOA_LIBRARY Cocoa)
+    list(APPEND GLWT_DEPENDENCY_LIBRARIES ${COCOA_LIBRARY})
+
+    find_path(COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
+    include_directories(${COCOA_INCLUDE_DIR})
 elseif (RASPBERRYPI)
     list(APPEND GLWT_SOURCES
         rpi/glwt_rpi.c
