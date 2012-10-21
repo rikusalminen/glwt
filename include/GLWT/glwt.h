@@ -65,6 +65,7 @@ void glwtWindowShow(GLWTWindow *window, int show);
 void glwtMakeCurrent(GLWTWindow *win);
 void glwtSwapBuffers(GLWTWindow *win);
 void glwtSwapInterval(GLWTWindow *win, int interval);
+void glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
 
 int glwtEventHandle(int wait);
 

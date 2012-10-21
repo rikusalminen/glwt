@@ -110,6 +110,10 @@ int main(int argc, char *argv[])
     glwtMakeCurrent(window);
     glwtSwapInterval(window, 1);
 
+    int width, height;
+    glwtWindowGetSize(window, &width, &height);
+    printf("Window size: %d x %d\n", width, height);
+
     while(!glwtWindowClosed(window))
     {
         if(glwtEventHandle(1) != 0)

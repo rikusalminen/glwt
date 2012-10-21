@@ -70,3 +70,11 @@ void glwtSwapInterval(GLWTWindow *win, int interval)
 {
     glXSwapIntervalEXT(glwt.x11.display, win->glx.surface, interval);
 }
+
+void glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
+{
+    unsigned int w, h;
+    glXQueryDrawable(glwt.x11.display, win->glx.surface, GLX_WIDTH, &w);
+    glXQueryDrawable(glwt.x11.display, win->glx.surface, GLX_HEIGHT, &h);
+    *width = (int)w; *height = (int)h;
+}
