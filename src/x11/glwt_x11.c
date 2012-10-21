@@ -86,6 +86,22 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
 #endif
         goto error;
 
+    XVisualInfo template;
+    template.visualid = glwt.x11.visual_id;
+
+    int num_vis;
+    XVisualInfo *vi = XGetVisualInfo(glwt.x11.display, VisualIDMask, &template, &num_vis);
+    if(!vi || num_vis < 1)
+    {
+        XFree(vi);
+        glwtErrorPrintf("XGetVisualInfo failed");
+        goto error;
+    }
+
+    glwt.x11.visual = vi->visual;
+    glwt.x11.depth = vi->depth;
+    XFree(vi);
+
     if((glwt.x11.colormap = XCreateColormap(
         glwt.x11.display,
         RootWindow(glwt.x11.display, glwt.x11.screen_num),

@@ -96,17 +96,6 @@ int glwtInitGLX(const GLWTConfig *config)
     glwt.glx.fbconfig = fbconfigs[0];
     XFree(fbconfigs);
 
-    XVisualInfo *vi = glXGetVisualFromFBConfig(glwt.x11.display, glwt.glx.fbconfig);
-    if(!vi)
-    {
-        glwtErrorPrintf("glXGetVisualFromFBConfig failed");
-        return -1;
-    }
-
-    glwt.x11.visual = vi->visual;
-    glwt.x11.depth = vi->depth;
-    XFree(vi);
-
     glXGetFBConfigAttrib(glwt.x11.display, glwt.glx.fbconfig, GLX_VISUAL_ID, &glwt.x11.visual_id);
 
     return 0;
