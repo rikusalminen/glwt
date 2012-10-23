@@ -23,6 +23,14 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# check if we are on a raspberry pi
+find_library(BROADCOM_LIBRARY bcm_host HINTS /opt/vc/lib)
+
+if (BROADCOM_LIBRARY)
+    set(GLWT_USE_EGL ON)
+    set(RASPBERRYPI ON)
+endif()
+
 add_subdirectory(ext)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/glxw/include)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/glxw)
