@@ -1,9 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(GLWT_SOURCES common/glwt.c)
 
-option(GLWT_USE_EGL "Use EGL" OFF)
-mark_as_advanced(GLWT_USE_EGL)
-
 if(WIN32)
     list(APPEND GLWT_SOURCES win32/glwt_win32.c)
 
@@ -45,6 +42,13 @@ if(GLWT_USE_EGL)
     mark_as_advanced(EGL_LIBRARY)
     list(APPEND GLWT_DEPENDENCY_LIBRARIES ${EGL_LIBRARY})
     add_definitions(-DGLWT_USE_EGL)
+
+    list(APPEND GLWT_DEPENDENCY_LIBRARIES glxw_egl)
+
+    list(APPEND GLWT_SOURCES
+        egl/glwt_egl.c
+        egl/window.c
+        )
 else()
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})

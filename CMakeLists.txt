@@ -9,6 +9,9 @@ option(GLWT_BUILD_TESTS "Build GLWT tests" OFF)
 mark_as_advanced(GLWT_BUILD_TESTS)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
+option(GLWT_USE_EGL "Use EGL" OFF)
+mark_as_advanced(GLWT_USE_EGL)
+
 if(BUILD_SHARED_LIBS)
     message(FATAL_ERROR "TODO: building shared libs not supported!")
 endif()

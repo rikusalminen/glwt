@@ -1,7 +1,5 @@
 #include <GLWT/glwt.h>
 
-#include <GL/glcorearb.h>
-
 int main(int argc, char *argv[])
 {
     (void)argc; (void)argv;

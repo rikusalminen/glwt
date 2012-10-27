@@ -36,7 +36,9 @@ static int requireGLXVersion(int req_major, int req_minor)
 
 int glwtInitGLX(const GLWTConfig *config)
 {
-    if(config && (config->api & GLWT_API_MASK) && !(config->api & GLWT_API_OPENGL))
+    if(config &&
+        (config->api & GLWT_API_MASK) != GLWT_API_ANY &&
+        (config->api & GLWT_API_MASK) != GLWT_API_OPENGL)
     {
         glwtErrorPrintf("GLX can only initialize OpenGL profiles");
         return -1;

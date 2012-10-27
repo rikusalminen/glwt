@@ -80,6 +80,7 @@ int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
         goto error;
 
 #ifdef GLWT_USE_EGL
+    glwt.egl.display = eglGetDisplay(glwt.x11.display);
     if(glwtInitEGL(config) != 0)
 #else
     if(glwtInitGLX(config) != 0)
