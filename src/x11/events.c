@@ -48,80 +48,128 @@ static int xlib_handle_event()
         switch(event.type)
         {
             case ConfigureNotify:
-                if(win->win_callbacks.resize_callback)
-                    win->win_callbacks.resize_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.xconfigure.width, event.xconfigure.height,
-                        win->win_callbacks.userdata);
+                        GLWT_WINDOW_RESIZE,
+                        .resize = {
+                            event.xconfigure.width,
+                            event.xconfigure.height
+                        }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case MapNotify:
             case UnmapNotify:
-                if(win->win_callbacks.show_callback)
-                    win->win_callbacks.show_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.type == MapNotify,
-                        win->win_callbacks.userdata);
+                        event.type == MapNotify ? GLWT_WINDOW_SHOW : GLWT_WINDOW_HIDE,
+                        .dummy = { 0 }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case Expose:
-                if(win->win_callbacks.expose_callback)
-                    win->win_callbacks.expose_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        win->win_callbacks.userdata);
+                        GLWT_WINDOW_EXPOSE,
+                        .dummy = { 0 }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case KeyPress:
             case KeyRelease:
-                if(win->win_callbacks.key_callback)
-                    win->win_callbacks.key_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.type == KeyPress,
-                        keymap_lookup(
-                            &glwt.x11.keymap,
-                            XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0)),
-                        event.xkey.keycode,
-                        mapKeyMod(event.xkey.state),
-                        win->win_callbacks.userdata);
+                        event.type == KeyPress ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP,
+                        .key = {
+                            keymap_lookup(
+                                &glwt.x11.keymap,
+                                XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0)),
+                            event.xkey.keycode,
+                            mapKeyMod(event.xkey.state)
+                        }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case FocusIn:
             case FocusOut:
-                if(win->win_callbacks.focus_callback)
-                    win->win_callbacks.focus_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.type == FocusIn,
-                        win->win_callbacks.userdata);
+                        event.type == FocusIn ? GLWT_WINDOW_FOCUS_IN : GLWT_WINDOW_FOCUS_OUT,
+                        .dummy = { 0 }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case ButtonPress:
             case ButtonRelease:
-                if(win->win_callbacks.button_callback)
-                    win->win_callbacks.button_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.type == ButtonPress,
-                        event.xbutton.x, event.xbutton.y,
-                        event.xbutton.button, // TODO: make these consistent on different platforms
-                        mapKeyMod(event.xbutton.state),
-                        win->win_callbacks.userdata);
+                        event.type == ButtonPress ? GLWT_WINDOW_BUTTON_DOWN : GLWT_WINDOW_BUTTON_UP,
+                        .button = {
+                            event.xbutton.x, event.xbutton.y,
+                            event.xbutton.button, // todo: make these consistent on different platforms
+                            mapKeyMod(event.xbutton.state)
+                        }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case MotionNotify:
-                if(win->win_callbacks.motion_callback)
-                    win->win_callbacks.motion_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.xmotion.x, event.xmotion.y,
-                        mapButtons(event.xmotion.state),
-                        win->win_callbacks.userdata);
+                        GLWT_WINDOW_MOUSE_MOTION,
+                        .motion = {
+                            event.xmotion.x, event.xmotion.y,
+                            mapButtons(event.xmotion.state)
+                        }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case EnterNotify:
             case LeaveNotify:
-                if(win->win_callbacks.mouseover_callback)
-                    win->win_callbacks.mouseover_callback(
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent e = {
                         win,
-                        event.type == EnterNotify,
-                        win->win_callbacks.userdata);
+                        event.type == EnterNotify ? GLWT_WINDOW_MOUSE_ENTER : GLWT_WINDOW_MOUSE_LEAVE,
+                        .dummy = { 0 }
+                    };
+                    win->win_callback(win, &e, win->userdata);
+                }
                 break;
             case ClientMessage:
                 if((Atom)event.xclient.data.l[0] == glwt.x11.atoms.WM_DELETE_WINDOW)
                 {
-                    if(win->win_callbacks.close_callback)
-                        win->win_callbacks.close_callback(win, win->win_callbacks.userdata);
                     win->closed = 1;
+
+                    if(win->win_callback)
+                    {
+                        GLWTWindowEvent e = {
+                            win,
+                            GLWT_WINDOW_CLOSE,
+                            .dummy = { 0 }
+                        };
+                        win->win_callback(win, &e, win->userdata);
+                    }
                 } else if((Atom)event.xclient.data.l[0] == glwt.x11.atoms._NET_WM_PING)
                 {
                     event.xclient.window = RootWindow(glwt.x11.display, glwt.x11.screen_num);

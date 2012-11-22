@@ -46,10 +46,13 @@ static int init_x11_atoms()
     return 0;
 }
 
-int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks)
+int glwtInit(
+    const GLWTConfig *config,
+    void (*error_callback)(const char *msg, void *userdata),
+    void *userdata)
 {
-    if(app_callbacks)
-        glwt.app_callbacks = *app_callbacks;
+    glwt.error_callback = error_callback;
+    glwt.userdata = userdata;
 
     keymap_init(&glwt.x11.keymap);
 

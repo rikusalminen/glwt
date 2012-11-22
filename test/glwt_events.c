@@ -8,58 +8,53 @@ static void error_callback(const char *msg, void *userdata)
     fprintf(stderr, "%s\n", msg);
 }
 
-static void close_callback(GLWTWindow *window, void *userdata)
+static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata)
 {
-    (void)window; (void)userdata;
-    printf("Window closed\n");
-}
+    (void)window;
+    (void)userdata;
 
-static void expose_callback(GLWTWindow *window, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Window exposed\n");
-}
-
-static void resize_callback(GLWTWindow *window, int width, int height, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Window resized  width: %d  height: %d\n", width, height);
-}
-
-static void show_callback(GLWTWindow *window, int show, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Window %s\n", show ? "show" : "hide");
-}
-
-static void focus_callback(GLWTWindow *window, int focus, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Window focus %s\n", focus ? "got" : "lost");
-}
-
-static void key_callback(GLWTWindow *window, int down, int keysym, int scancode, int mod, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n", down ? "down" : "up", keysym, scancode, mod);
-}
-
-static void motion_callback(GLWTWindow *window, int x, int y, int buttons, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Motion  x: %d  y: %d  buttons: %X\n", x, y, buttons);
-}
-
-static void button_callback(GLWTWindow *window, int down, int x, int y, int button, int mod, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n", down ? "down" : "up", x, y, button, mod);
-}
-
-static void mouseover_callback(GLWTWindow *window, int enter, void *userdata)
-{
-    (void)window; (void)userdata;
-    printf("Mouse %s\n", enter ? "enter" : "leave");
+    switch(event->type)
+    {
+        case GLWT_WINDOW_CLOSE:
+            printf("Window closed\n");
+            break;
+        case GLWT_WINDOW_EXPOSE:
+            printf("Window exposed\n");
+            break;
+        case GLWT_WINDOW_RESIZE:
+            printf("Window resized  width: %d  height: %d\n", event->resize.width, event->resize.height);
+            break;
+        case GLWT_WINDOW_SHOW:
+        case GLWT_WINDOW_HIDE:
+            printf("Window %s\n", (event->type == GLWT_WINDOW_SHOW) ? "show" : "hide");
+            break;
+        case GLWT_WINDOW_FOCUS_IN:
+        case GLWT_WINDOW_FOCUS_OUT:
+            printf("Window focus %s\n", (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
+            break;
+        case GLWT_WINDOW_KEY_UP:
+        case GLWT_WINDOW_KEY_DOWN:
+            printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n",
+                (event->type == GLWT_WINDOW_KEY_DOWN) ? "down" : "up",
+                event->key.keysym, event->key.scancode, event->key.mod);
+            break;
+        case GLWT_WINDOW_BUTTON_UP:
+        case GLWT_WINDOW_BUTTON_DOWN:
+            printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n",
+                (event->type == GLWT_WINDOW_BUTTON_DOWN) ? "down" : "up",
+                event->button.x, event->button.y, event->button.button, event->button.mod);
+            break;
+        case GLWT_WINDOW_MOUSE_MOTION:
+            printf("Motion  x: %d  y: %d  buttons: %X\n",
+                event->motion.x, event->motion.y, event->motion.buttons);
+            break;
+        case GLWT_WINDOW_MOUSE_ENTER:
+        case GLWT_WINDOW_MOUSE_LEAVE:
+            printf("Mouse %s\n", (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
+            break;
+        default:
+            break;
+    }
 }
 
 int main(int argc, char *argv[])
@@ -81,29 +76,11 @@ int main(int argc, char *argv[])
         .api_version_minor = 0
     };
 
-    GLWTAppCallbacks app_callbacks = {
-        .error_callback = error_callback,
-        .userdata = 0,
-    };
-
-    if(glwtInit(&glwt_config, &app_callbacks) != 0)
+    if(glwtInit(&glwt_config, error_callback, NULL) != 0)
         goto error;
 
-    GLWTWindowCallbacks win_callbacks = {
-        .close_callback = close_callback,
-        .expose_callback = expose_callback,
-        .resize_callback = resize_callback,
-        .show_callback = show_callback,
-        .focus_callback = focus_callback,
-        .key_callback = key_callback,
-        .motion_callback = motion_callback,
-        .button_callback = button_callback,
-        .mouseover_callback = mouseover_callback,
-        .userdata = 0
-    };
-
     GLWTWindow *window = 0;
-    if(!(window = glwtWindowCreate("", 400, 300, &win_callbacks, 0)))
+    if(!(window = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL)))
         goto error;
 
     glwtWindowShow(window, 1);

@@ -5,16 +5,18 @@
 GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
-    const GLWTWindowCallbacks *win_callbacks,
-    GLWTWindow *share)
+    GLWTWindow *share,
+    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
+    void *userdata)
 {
     GLWTWindow *win = calloc(1, sizeof(GLWTWindow));
     if(!win)
         return 0;
 
     (void)title; // TODO: set window title
-    if(win_callbacks)
-        win->win_callbacks = *win_callbacks;
+
+    win->win_callback = win_callback;
+    win->userdata = userdata;
 
     XSetWindowAttributes attrib;
     attrib.colormap = glwt.x11.colormap;

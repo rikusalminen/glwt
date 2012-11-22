@@ -27,36 +27,53 @@ typedef struct GLWTConfig
     int api_version_major, api_version_minor;
 } GLWTConfig;
 
-typedef struct GLWTAppCallbacks
-{
-    void (*error_callback)(const char *msg, void *userdata);
-    void* userdata;
-} GLWTAppCallbacks;
-
 typedef struct GLWTWindow GLWTWindow;
 
-typedef struct GLWTWindowCallbacks
+typedef struct GLWTWindowEvent
 {
-    void (*close_callback)(GLWTWindow *window, void *userdata);
-    void (*expose_callback)(GLWTWindow *window, void *userdata);
-    void (*resize_callback)(GLWTWindow *window, int width, int height, void *userdata);
-    void (*show_callback)(GLWTWindow *window, int show, void *userdata);
-    void (*focus_callback)(GLWTWindow *window, int focus, void *userdata);
-    void (*key_callback)(GLWTWindow *window, int down, int keysym, int scancode, int mod, void *userdata);
-    void (*motion_callback)(GLWTWindow *window, int x, int y, int buttons, void *userdata);
-    void (*button_callback)(GLWTWindow *window, int down, int x, int y, int button, int mod, void *userdata);
-    void (*mouseover_callback)(GLWTWindow *window, int enter, void *userdata);
-    void* userdata;
-} GLWTWindowCallbacks;
+    GLWTWindow *window;
 
-int glwtInit(const GLWTConfig *config, const GLWTAppCallbacks *app_callbacks);
+    enum {
+        GLWT_WINDOW_NO_EVENT = 0,
+        GLWT_WINDOW_CLOSE,
+        GLWT_WINDOW_EXPOSE,
+        GLWT_WINDOW_RESIZE,
+        GLWT_WINDOW_SHOW,
+        GLWT_WINDOW_HIDE,
+        GLWT_WINDOW_FOCUS_IN,
+        GLWT_WINDOW_FOCUS_OUT,
+        GLWT_WINDOW_KEY_UP,
+        GLWT_WINDOW_KEY_DOWN,
+        GLWT_WINDOW_BUTTON_UP,
+        GLWT_WINDOW_BUTTON_DOWN,
+        GLWT_WINDOW_MOUSE_MOTION,
+        GLWT_WINDOW_MOUSE_ENTER,
+        GLWT_WINDOW_MOUSE_LEAVE,
+    } type;
+
+    union {
+        struct { int width, height; } resize;
+        struct { int keysym, scancode, mod; } key;
+        struct { int x, y, buttons; } motion;
+        struct { int x, y, button, mod; } button;
+        struct { int dummy; } dummy;
+    };
+} GLWTWindowEvent;
+
+int glwtInit(
+    const GLWTConfig *config,
+    void (*error_callback)(const char *msg, void *userdata),
+    void *userdata
+    );
 void glwtQuit();
 
 GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
-    const GLWTWindowCallbacks *win_callbacks,
-    GLWTWindow *share);
+    GLWTWindow *share,
+    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
+    void *userdata
+    );
 void glwtWindowDestroy(GLWTWindow *window);
 
 int glwtWindowClosed(GLWTWindow *window);

@@ -18,8 +18,8 @@ int glwtErrorPrintf(const char *fmt, ...)
     int val = vsnprintf(buffer, size+1, fmt, ap);
     va_end(ap);
 
-    if(glwt.app_callbacks.error_callback)
-        glwt.app_callbacks.error_callback(buffer, glwt.app_callbacks.userdata);
+    if(glwt.error_callback)
+        glwt.error_callback(buffer, glwt.userdata);
     else
         fprintf(stderr, "%s\n", buffer);
 
