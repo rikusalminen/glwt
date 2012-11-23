@@ -11,7 +11,9 @@
 #define GLWT_X11_ATOMS(ATOM) \
     ATOM(_NET_SUPPORTED) \
     ATOM(WM_DELETE_WINDOW) \
-    ATOM(_NET_WM_PING)
+    ATOM(_NET_WM_PING) \
+    ATOM(_NET_WM_NAME) \
+    ATOM(UTF8_STRING)
 
 struct glwt_x11
 {

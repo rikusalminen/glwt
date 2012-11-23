@@ -83,6 +83,8 @@ int main(int argc, char *argv[])
     if(!(window = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL)))
         goto error;
 
+    glwtWindowSetTitle(window, "GLWT Events test");
+
     glwtWindowShow(window, 1);
     glwtMakeCurrent(window);
     glwtSwapInterval(window, 1);

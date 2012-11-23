@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include <glwt_internal.h>
 
@@ -12,8 +13,6 @@ GLWTWindow *glwtWindowCreate(
     GLWTWindow *win = calloc(1, sizeof(GLWTWindow));
     if(!win)
         return 0;
-
-    (void)title; // TODO: set window title
 
     win->win_callback = win_callback;
     win->userdata = userdata;
@@ -68,6 +67,8 @@ GLWTWindow *glwtWindowCreate(
         goto error;
     }
 
+    glwtWindowSetTitle(win, title);
+
     return win;
 error:
     glwtWindowDestroy(win);
@@ -101,4 +102,16 @@ void glwtWindowShow(GLWTWindow *win, int show)
     else
         XUnmapWindow(glwt.x11.display, win->x11.window);
     XFlush(glwt.x11.display);
+}
+
+void glwtWindowSetTitle(GLWTWindow *window, const char *title)
+{
+    XChangeProperty(
+        glwt.x11.display,
+        window->x11.window,
+        glwt.x11.atoms._NET_WM_NAME,
+        glwt.x11.atoms.UTF8_STRING,
+        8,
+        PropModeReplace,
+        (unsigned char*)title, strlen(title));
 }

@@ -78,6 +78,7 @@ void glwtWindowDestroy(GLWTWindow *window);
 
 int glwtWindowClosed(GLWTWindow *window);
 void glwtWindowShow(GLWTWindow *window, int show);
+void glwtWindowSetTitle(GLWTWindow *window, const char *title);
 
 void glwtMakeCurrent(GLWTWindow *win);
 void glwtSwapBuffers(GLWTWindow *win);
