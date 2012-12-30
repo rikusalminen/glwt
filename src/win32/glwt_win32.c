@@ -39,6 +39,8 @@ int glwtInit(
     glwt.error_callback = error_callback;
     glwt.userdata = userdata;
 
+    keymap_init(&glwt.win32.keymap);
+
     glwt.win32.hinstance = GetModuleHandle(0);
     if(!glwt.win32.hinstance)
     {
@@ -53,7 +55,7 @@ int glwtInit(
     klass.cbWndExtra = sizeof(GLWTWindow*);
     klass.hInstance = glwt.win32.hinstance;
     klass.hIcon = 0;
-    klass.hCursor = 0;
+    klass.hCursor = LoadCursor( NULL, IDC_ARROW );
     klass.hbrBackground = 0;
     klass.lpszMenuName = 0;
     klass.lpszClassName = klassname;
@@ -69,7 +71,7 @@ int glwtInit(
         L"",    // window title
         WS_POPUP | WS_DISABLED,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        100, 100, // width, height
+        100, 100, /* width, height */
         0,
         0,
         glwt.win32.hinstance,

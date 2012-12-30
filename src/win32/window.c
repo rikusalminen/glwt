@@ -1,6 +1,8 @@
 #include <glwt_internal.h>
 #include <stdlib.h>
 
+#include <malloc.h>
+
 GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
@@ -74,7 +76,7 @@ GLWTWindow *glwtWindowCreate(
 #endif
         goto error;
 
-    (void)title;
+    glwtWindowSetTitle(win, title);
 
     return win;
 error:
@@ -109,5 +111,17 @@ void glwtWindowShow(GLWTWindow *win, int show)
 
 void glwtWindowSetTitle(GLWTWindow *win, const char *title)
 {
-    (void)win; (void)title;
+    WCHAR *buffer;
+    DWORD len;
+
+    if((len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, title, -1, NULL, 0)) == 0)
+    {
+        glwtWin32Error("MultiByteToWideChar failed");
+        return;
+    }
+
+    buffer = alloca(sizeof(WCHAR) * len);
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, title, -1, buffer, len);
+
+    SetWindowTextW(win->win32.hwnd, buffer);
 }
