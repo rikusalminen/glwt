@@ -2,10 +2,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(GLWT_SOURCES common/glwt.c)
 
 if(WIN32)
-    list(APPEND GLWT_SOURCES win32/glwt_win32.c)
+    list(APPEND GLWT_SOURCES
+        win32/glwt_win32.c
+        win32/window.c
+        win32/events.c
+        )
 
     if(NOT GLWT_USE_EGL)
-        list(APPEND GLWT_SOURCES wgl/glwt_wgl.h)
+        list(APPEND GLWT_SOURCES
+            wgl/glwt_wgl.c
+            wgl/window.c
+            )
+
+        list(APPEND GLWT_DEPENDENCY_LIBRARIES glxw_wgl)
     endif()
 
 elseif (APPLE)

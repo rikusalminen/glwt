@@ -2,9 +2,10 @@
 
 int main(int argc, char *argv[])
 {
+    GLWTWindow *window = 0;
+
     (void)argc; (void)argv;
 
-    GLWTWindow *window = 0;
     if(glwtInit(0, 0, 0) != 0 ||
         !(window = glwtWindowCreate("GLWT Simplest", 400, 300, 0, 0, 0)))
         goto error;

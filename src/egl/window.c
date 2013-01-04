@@ -2,17 +2,21 @@
 
 int glwtWindowCreateEGL(GLWTWindow *win, GLWTWindow *share)
 {
+    int context_attribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, glwt.api_version_major != 0 ? glwt.api_version_major : 1,
+        EGL_NONE
+    };
+
+    int surface_attribs[] = {
+        EGL_NONE
+    };
+
     if(!eglBindAPI((glwt.api & GLWT_API_MASK) == GLWT_API_OPENGL ?
         EGL_OPENGL_API : EGL_OPENGL_ES_API))
     {
         glwtErrorPrintf("eglBindAPI failed");
         goto error;
     }
-
-    int context_attribs[] = {
-        EGL_CONTEXT_CLIENT_VERSION, glwt.api_version_major != 0 ? glwt.api_version_major : 1,
-        EGL_NONE
-    };
 
     win->egl.context = eglCreateContext(
         glwt.egl.display,
@@ -25,17 +29,15 @@ int glwtWindowCreateEGL(GLWTWindow *win, GLWTWindow *share)
         goto error;
     }
 
-    int surface_attribs[] = {
-        EGL_NONE
-    };
-
     win->egl.surface = eglCreateWindowSurface(
         glwt.egl.display,
         glwt.egl.config,
 #ifdef GLWT_glwt_x11_h
         win->x11.window,
 #elif defined(GLWT_glwt_rpi_h)
-	&(win->rpi.nativewindow),
+        &(win->rpi.nativewindow),
+#elif defined(GLWT_glwt_win32_h)
+        win->win32.hwnd,
 #else
 #error EGL: unsupported windowing API
 #endif
