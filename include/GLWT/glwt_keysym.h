@@ -19,7 +19,7 @@
 
 #define GLWT_KEY_PLUS                   0x2b
 #define GLWT_KEY_COMMA                  0x2c
-#define GLWT_KEY_MINUS                  0x2c
+#define GLWT_KEY_MINUS                  0x2d
 #define GLWT_KEY_PERIOD                 0x2e
 #define GLWT_KEY_SLASH                  0x2f
 
