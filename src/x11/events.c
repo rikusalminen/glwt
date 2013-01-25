@@ -38,12 +38,12 @@ static int xlib_handle_event()
         ++num_handled_events;
 
         GLWTWindow *win = 0;
-        if(XFindContext(glwt.x11.display, event.xany.window, glwt.x11.xcontext, (XPointer*)&win) != 0 ||
-            !win)
-        {
-            glwtErrorPrintf("XFindContext window not found");
-            return -1;
-        }
+        if(XFindContext(
+                glwt.x11.display,
+                event.xany.window,
+                glwt.x11.xcontext,
+                (XPointer*)&win) != 0)
+            continue;
 
         switch(event.type)
         {
