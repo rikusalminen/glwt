@@ -44,7 +44,6 @@ int createPixelFormat(const GLWTConfig *config)
                 (config->api_version_major == 0);
     }
 
-    int attribute = 0;
     NSOpenGLPixelFormatAttribute attribs[] = {
         NSOpenGLPFADoubleBuffer,
         NSOpenGLPFAColorSize, colorBits,

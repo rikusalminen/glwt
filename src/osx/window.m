@@ -247,15 +247,12 @@ static unsigned int convertModifiers(unsigned int mods)
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_KEY_DOWN,
-        .key = {
-            .keysym = convertKeysym(event.keyCode),
-            .scancode = event.keyCode,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_KEY_DOWN;
+    e.key.keysym = convertKeysym(event.keyCode);
+    e.key.scancode = event.keyCode;
+    e.key.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -265,15 +262,12 @@ static unsigned int convertModifiers(unsigned int mods)
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_KEY_UP,
-        .key = {
-            .keysym = convertKeysym(event.keyCode),
-            .scancode = event.keyCode,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_KEY_UP;
+    e.key.keysym = convertKeysym(event.keyCode);
+    e.key.scancode = event.keyCode;
+    e.key.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -294,15 +288,12 @@ static unsigned int convertModifiers(unsigned int mods)
         (newModifiers > ((GLWTApplication *)glwt.osx.app).modifier_flags);
     ((GLWTApplication *)glwt.osx.app).modifier_flags = newModifiers;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        (down) ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP,
-        .key = {
-            .keysym = convertKeysym(event.keyCode),
-            .scancode = event.keyCode,
-            .mod = convertModifiers(newModifiers)
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = (down) ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP;
+    e.key.keysym = convertKeysym(event.keyCode);
+    e.key.scancode = event.keyCode;
+    e.key.mod = convertModifiers(newModifiers);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -315,15 +306,12 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_MOTION,
-        .motion = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .buttons = 0
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_MOTION;
+    e.motion.x = pos.x;
+    e.motion.y = frame.size.height - pos.y;
+    e.motion.buttons = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -336,15 +324,12 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_MOTION,
-        .motion = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .buttons = 1
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_MOTION;
+    e.motion.x = pos.x;
+    e.motion.y = frame.size.height - pos.y;
+    e.motion.buttons = 1;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -357,15 +342,12 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_MOTION,
-        .motion = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .buttons = 2
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_MOTION;
+    e.motion.x = pos.x;
+    e.motion.y = frame.size.height - pos.y;
+    e.motion.buttons = 2;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -378,15 +360,12 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_MOTION,
-        .motion = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .buttons = [event buttonNumber]
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_MOTION;
+    e.motion.x = pos.x;
+    e.motion.y = frame.size.height - pos.y;
+    e.motion.buttons = [event buttonNumber];
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -399,16 +378,13 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_DOWN,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = 1,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_DOWN;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = 1;
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -421,16 +397,13 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_UP,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = 1,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_UP;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = 1;
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -443,16 +416,13 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_DOWN,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = 2,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_DOWN;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = 2;
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -465,16 +435,13 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_UP,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = 2,
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_UP;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = 2;
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -487,16 +454,13 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_DOWN,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = [event buttonNumber],
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_DOWN;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = [event buttonNumber];
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -509,44 +473,43 @@ static unsigned int convertModifiers(unsigned int mods)
     NSPoint pos = [self convertPoint:[event locationInWindow] fromView:nil];
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_BUTTON_UP,
-        .button = {
-            .x = pos.x,
-            .y = frame.size.height - pos.y,
-            .button = [event buttonNumber],
-            .mod = convertModifiers([event modifierFlags])
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_BUTTON_UP;
+    e.button.x = pos.x;
+    e.button.y = frame.size.height - pos.y;
+    e.button.button = [event buttonNumber];
+    e.button.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
 - (void)mouseEntered:(NSEvent *)event
 {
+    (void)event;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_ENTER,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_ENTER;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
 - (void)mouseExited:(NSEvent *)event
 {
+    (void)event;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_MOUSE_LEAVE,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_MOUSE_LEAVE;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -589,14 +552,15 @@ static unsigned int convertModifiers(unsigned int mods)
 
 - (void)windowWillClose:(id)sender
 {
+    (void)sender;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_CLOSE,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_CLOSE;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
     glwt_window->closed = 1;
@@ -604,28 +568,30 @@ static unsigned int convertModifiers(unsigned int mods)
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
+    (void)notification;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_FOCUS_IN,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_FOCUS_IN;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
+    (void)notification;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_FOCUS_OUT,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_FOCUS_OUT;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
@@ -633,6 +599,8 @@ static unsigned int convertModifiers(unsigned int mods)
 
 - (void)windowDidResize:(NSNotification *)notification
 {
+    (void)notification;
+
     [glwt_window->osx.ctx update];
 
     if(!glwt_window->win_callback)
@@ -640,47 +608,47 @@ static unsigned int convertModifiers(unsigned int mods)
 
     NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_RESIZE,
-        .resize = {
-            .width = frame.size.width,
-            .height = frame.size.height
-        }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_RESIZE;
+    e.resize.width = frame.size.width;
+    e.resize.height = frame.size.height;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
 - (void)windowDidMove:(NSNotification *)notification
 {
+    (void)notification;
+
     [glwt_window->osx.ctx update];
 
-    NSRect frame = [[glwt_window->osx.nswindow contentView] frame];
-
-    // TODO: handle move event
+    // TODO: handle event?
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification
 {
+    (void)notification;
     // TODO: handle event?
 }
 
 - (void)windowDidDeminiaturize:(NSNotification *)notification
 {
+    (void)notification;
     // TODO: handle event?
 }
 
 - (void)windowDidExpose:(NSNotification *)notification
 {
+    (void)notification;
+
     if(!glwt_window->win_callback)
         return;
 
-    GLWTWindowEvent e = {
-        glwt_window,
-        GLWT_WINDOW_EXPOSE,
-        .dummy = { 0 }
-    };
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_EXPOSE;
+    e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
