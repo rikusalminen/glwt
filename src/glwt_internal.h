@@ -13,6 +13,12 @@
     #include <osx/glwt_osx.h>
 #elif defined(RASPBERRYPI)
     #include <rpi/glwt_rpi.h>
+#elif defined(ANDROID)
+    #ifndef GLWT_USE_EGL
+    #define GLWT_USE_EGL
+    #endif
+
+    #include <android/glwt_android.h>
 #else
     #include <x11/glwt_x11.h>
 
@@ -46,6 +52,8 @@ struct glwt
     struct glwt_osx osx;
 #elif defined(RASPBERRYPI)
     struct glwt_rpi rpi;
+#elif defined(ANDROID)
+    struct glwt_android android;
 #else
     struct glwt_x11 x11;
     #ifndef GLWT_USE_EGL
@@ -74,6 +82,8 @@ struct GLWTWindow
     struct glwt_window_osx osx;
 #elif defined(RASPBERRYPI)
     struct glwt_window_rpi rpi;
+#elif defined(ANDROID)
+    struct glwt_window_android android;
 #else
     struct glwt_window_x11 x11;
     #ifndef GLWT_USE_EGL

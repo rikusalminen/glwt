@@ -1,5 +1,7 @@
 #include <GLWT/glwt.h>
 
+#include <GLWT/glwt_android_main.h>
+
 int main(int argc, char *argv[])
 {
     (void)argc; (void)argv;
