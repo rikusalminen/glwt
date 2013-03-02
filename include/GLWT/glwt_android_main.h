@@ -16,8 +16,6 @@ void android_main(struct android_app *android_app)
     app_dummy();
     glwtAndroidApp(android_app);
 
-    return ;
-
     char *argv[] = { "glwt", 0 };
     main(1, argv);
 }

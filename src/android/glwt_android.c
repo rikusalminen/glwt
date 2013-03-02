@@ -24,8 +24,10 @@ int glwtInit(
     glwt.android.android_app->onAppCmd = glwt_app_cmd_callback;
     glwt.android.android_app->onInputEvent = glwt_input_event_callback;
 
+/*
     if(glwtInitEGL(config) != 0)
         goto error;
+        */
 
     return 0;
 error:

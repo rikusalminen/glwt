@@ -26,7 +26,6 @@ LOCAL_SRC_FILES := \
 	src/android/events.c \
 	src/egl/glwt_egl.c \
 	src/egl/window.c
-LOCAL_SRC_FILES += src/android/android_main.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include $(LOCAL_PATH)/src $(LOCAL_PATH)/ext/glxw/include
 LOCAL_CFLAGS := -W -Wall -Wextra
 LOCAL_CFLAGS += -g
