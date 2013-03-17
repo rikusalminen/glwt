@@ -216,17 +216,6 @@ static unsigned int convertModifiers(unsigned int mods)
     [super updateTrackingAreas];
 }
 
-- (BOOL)createContextSharing:(NSOpenGLContext *)share
-{
-    glwt_window->osx.ctx = [[NSOpenGLContext alloc]
-                            initWithFormat:glwt.osx.pixel_format
-                            shareContext:share];
-    if (glwt_window->osx.ctx == 0) {
-        return NO;
-    }
-    return YES;
-}
-
 - (BOOL)isOpaque
 {
     return YES;
@@ -689,14 +678,13 @@ GLWTWindow *glwtWindowCreate(
     [win->osx.nswindow setTitle:[NSString stringWithUTF8String:title]];
 
     GLWTView *view = [[GLWTView alloc] initWithFrame:[win->osx.nswindow frame]andGLWTWindow:win];
-
     [win->osx.nswindow setContentView:view];
-    [win->osx.ctx setView:[win->osx.nswindow contentView]];
 
-    NSOpenGLContext *sharectx = nil;
-    if(share)
-        sharectx = share->osx.ctx;
-    if(![view createContextSharing:sharectx])
+    win->osx.ctx = [[NSOpenGLContext alloc]
+                            initWithFormat:glwt.osx.pixel_format
+                            shareContext: share ? share->osx.ctx : nil];
+
+    if(!win->osx.ctx)
     {
         glwtErrorPrintf("Failed to create NSOpenGL Context");
 
@@ -704,6 +692,7 @@ GLWTWindow *glwtWindowCreate(
         free(win);
         return 0;
     }
+    [win->osx.ctx setView:[win->osx.nswindow contentView]];
 
     if([win->osx.nswindow respondsToSelector:@selector(setRestorable:)])
         [win->osx.nswindow setRestorable:NO];

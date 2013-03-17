@@ -51,9 +51,9 @@ int createPixelFormat(const GLWTConfig *config)
         NSOpenGLPFAStencilSize, config ? config->stencil_bits : 0,
         NSOpenGLPFASampleBuffers, config ? config->sample_buffers : 0,
         NSOpenGLPFASamples, config ? config->samples : 0,
-#if MAC_OSX_VERSION_MAX_ALLOWED >= 1070
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
         core ? NSOpenGLPFAOpenGLProfile : 0,
-        core ? NSOpenGLPFAProfileVersion3_2Core : 0,
+        core ? NSOpenGLProfileVersion3_2Core : 0,
 #endif
         0
     };
