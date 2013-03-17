@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
     (void)argc; (void)argv;
     int err = -1;
 
+    GLWTWindow *window = 0;
+
     GLWTConfig glwt_config = {
         .red_bits = 0,
         .green_bits = 0,
@@ -79,7 +81,6 @@ int main(int argc, char *argv[])
     if(glwtInit(&glwt_config, error_callback, NULL) != 0)
         goto error;
 
-    GLWTWindow *window = 0;
     if(!(window = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL)))
         goto error;
 
