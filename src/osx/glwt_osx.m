@@ -102,7 +102,7 @@ void glwtQuit()
 {
     if (glwt.osx.app)
     {
-        [glwt.osx.app terminate:nil];
+        [glwt.osx.app stop:nil];
         [glwt.osx.app release];
         glwt.osx.app = nil;
     }

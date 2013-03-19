@@ -539,12 +539,13 @@ static unsigned int convertModifiers(unsigned int mods)
     return self;
 }
 
-- (void)windowWillClose:(id)sender
+- (BOOL)windowShouldClose:(id)sender
 {
     (void)sender;
+    glwt_window->closed = 1;
 
     if(!glwt_window->win_callback)
-        return;
+        return NO;
 
     GLWTWindowEvent e;
     e.window = glwt_window;
@@ -552,7 +553,7 @@ static unsigned int convertModifiers(unsigned int mods)
     e.dummy.dummy = 0;
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
-    glwt_window->closed = 1;
+    return NO;
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
@@ -655,9 +656,10 @@ GLWTWindow *glwtWindowCreate(
                              void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
                              void *userdata)
 {
+    GLWTView *view = 0;
     GLWTWindow *win = calloc(1, sizeof(GLWTWindow));
     if (!win)
-        return 0;
+        goto error;
 
     win->win_callback = win_callback;
     win->userdata = userdata;
@@ -676,8 +678,9 @@ GLWTWindow *glwtWindowCreate(
     [win->osx.nswindow setDelegate:[[GLWTNSWindowDelegate alloc] initWithGLWTWindow:win]];
     [win->osx.nswindow setAcceptsMouseMovedEvents:YES];
     [win->osx.nswindow setTitle:[NSString stringWithUTF8String:title]];
+    [win->osx.nswindow setReleasedWhenClosed:NO];
 
-    GLWTView *view = [[GLWTView alloc] initWithFrame:[win->osx.nswindow frame]andGLWTWindow:win];
+    view = [[GLWTView alloc] initWithFrame:[win->osx.nswindow frame]andGLWTWindow:win];
     [win->osx.nswindow setContentView:view];
 
     win->osx.ctx = [[NSOpenGLContext alloc]
@@ -687,10 +690,7 @@ GLWTWindow *glwtWindowCreate(
     if(!win->osx.ctx)
     {
         glwtErrorPrintf("Failed to create NSOpenGL Context");
-
-        [win->osx.nswindow release];
-        free(win);
-        return 0;
+        goto error;
     }
     [win->osx.ctx setView:[win->osx.nswindow contentView]];
 
@@ -698,12 +698,22 @@ GLWTWindow *glwtWindowCreate(
         [win->osx.nswindow setRestorable:NO];
 
     return win;
+
+error:
+    glwtWindowDestroy(win);
+    return 0;
 }
 
 void glwtWindowDestroy(GLWTWindow *win)
 {
-    if(!win->closed)
+    if(!win)
+        return;
+    if(win->osx.ctx)
+       [win->osx.ctx release];
+    if(win->osx.nswindow)
     {
+        [[win->osx.nswindow contentView] release];
+        [[win->osx.nswindow delegate] release];
         [win->osx.nswindow setDelegate:nil];
         [win->osx.nswindow close];
     }
