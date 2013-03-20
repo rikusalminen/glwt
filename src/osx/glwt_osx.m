@@ -1,9 +1,7 @@
 #import <GLWT/glwt.h>
 #import <glwt_internal.h>
 
-#import "application.h"
-
-int createPixelFormat(const GLWTConfig *config)
+static int createPixelFormat(const GLWTConfig *config)
 {
     if(config &&
        (config->api & GLWT_API_MASK) != GLWT_API_ANY &&
@@ -78,8 +76,7 @@ int glwtInit(const GLWTConfig *config,
     if(createPixelFormat(config) < 0)
         return -1;
 
-    glwt.osx.app = [GLWTApplication sharedApplication];
-    ((GLWTApplication *)glwt.osx.app).modifier_flags = [NSEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask;
+    glwt.osx.app = [NSApplication sharedApplication];
     glwt.osx.autorelease_pool = [[NSAutoreleasePool alloc] init];
 
     /*
@@ -111,4 +108,32 @@ void glwtQuit()
         [glwt.osx.autorelease_pool drain];
         glwt.osx.autorelease_pool = nil;
     }
+}
+
+int glwtEventHandle(int wait)
+{
+    int events_handled = 0;
+    do
+    {
+        NSEvent* event = [
+            glwt.osx.app nextEventMatchingMask: NSAnyEventMask
+            untilDate: wait ? [NSDate distantFuture] : nil
+            inMode: NSDefaultRunLoopMode
+            dequeue: YES];
+
+        if(event)
+        {
+            if ([event type] == NSKeyUp && ([event modifierFlags] & NSCommandKeyMask))
+                [[glwt.osx.app keyWindow] sendEvent:event];
+            else
+                [glwt.osx.app sendEvent:event];
+
+            events_handled++;
+        }
+    } while(events_handled == 0 && wait);
+
+    [glwt.osx.autorelease_pool drain];
+    glwt.osx.autorelease_pool = [NSAutoreleasePool new];
+
+    return 0;
 }

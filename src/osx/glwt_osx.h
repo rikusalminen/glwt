@@ -20,6 +20,8 @@ struct glwt_window_osx
 {
     id nswindow;
     id ctx;
+
+    unsigned int modifier_flags;
 };
 
 #endif

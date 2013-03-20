@@ -5,7 +5,6 @@
 #import <CoreVideo/CoreVideo.h>
 
 #import "window.h"
-#import "application.h"
 
 //=================================================================
 // Helper functions
@@ -263,19 +262,12 @@ static unsigned int convertModifiers(unsigned int mods)
 
 - (void)flagsChanged:(NSEvent *)event
 {
+    NSUInteger newModifiers = [event modifierFlags] & NSDeviceIndependentModifierFlagsMask;
+    int down = (newModifiers > glwt_window->osx.modifier_flags);
+    glwt_window->osx.modifier_flags = newModifiers;
+
     if(!glwt_window->win_callback)
         return;
-
-    NSUInteger newModifiers = [event modifierFlags] & NSDeviceIndependentModifierFlagsMask;
-
-    // TODO: this may occasionally fire the callback with no actual changes
-    // Solution:
-    //if(newModifiers != [event modifierFlags])
-    //    return;
-
-    int down =
-        (newModifiers > ((GLWTApplication *)glwt.osx.app).modifier_flags);
-    ((GLWTApplication *)glwt.osx.app).modifier_flags = newModifiers;
 
     GLWTWindowEvent e;
     e.window = glwt_window;
@@ -650,11 +642,11 @@ static unsigned int convertModifiers(unsigned int mods)
 //=================================================================
 
 GLWTWindow *glwtWindowCreate(
-                             const char *title,
-                             int width, int height,
-                             GLWTWindow *share,
-                             void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
-                             void *userdata)
+    const char *title,
+    int width, int height,
+    GLWTWindow *share,
+    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
+    void *userdata)
 {
     GLWTView *view = 0;
     GLWTWindow *win = calloc(1, sizeof(GLWTWindow));
@@ -672,6 +664,11 @@ GLWTWindow *glwtWindowCreate(
                            styleMask:styleMask
                            backing:NSBackingStoreBuffered
                            defer:NO];
+    if(!win->osx.nswindow)
+    {
+        glwtErrorPrintf("NSWindow initWithContentRect failed");
+        goto error;
+    }
 
     ((GLWTNSWindow *)win->osx.nswindow).glwt_window = win;
     [win->osx.nswindow center];
@@ -681,6 +678,11 @@ GLWTWindow *glwtWindowCreate(
     [win->osx.nswindow setReleasedWhenClosed:NO];
 
     view = [[GLWTView alloc] initWithFrame:[win->osx.nswindow frame]andGLWTWindow:win];
+    if(!view)
+    {
+        glwtErrorPrintf("NSView initWithFrame failed");
+        goto error;
+    }
     [win->osx.nswindow setContentView:view];
 
     win->osx.ctx = [[NSOpenGLContext alloc]
@@ -696,6 +698,8 @@ GLWTWindow *glwtWindowCreate(
 
     if([win->osx.nswindow respondsToSelector:@selector(setRestorable:)])
         [win->osx.nswindow setRestorable:NO];
+
+    win->osx.modifier_flags = [NSEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask;
 
     return win;
 

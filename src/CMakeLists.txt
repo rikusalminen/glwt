@@ -11,7 +11,6 @@ if(WIN32)
 elseif (APPLE)
     list(APPEND GLWT_SOURCES
         osx/glwt_osx.m
-        osx/application.m
         osx/window.m
         )
 
