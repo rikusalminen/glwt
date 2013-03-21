@@ -25,7 +25,7 @@ static const struct keymap_entry unsorted_keymap[] =
     { VK_OEM_COMMA, GLWT_KEY_COMMA },
     { VK_OEM_MINUS, GLWT_KEY_MINUS },
     { VK_OEM_PERIOD, GLWT_KEY_PERIOD },
-{ VK_DIVIDE, GLWT_KEY_SLASH }, /* TODO: what? */
+    { VK_DIVIDE, GLWT_KEY_SLASH },
 
     { (int)('0'), GLWT_KEY_0 },
     { (int)('1'), GLWT_KEY_1 },
@@ -83,7 +83,7 @@ static const struct keymap_entry unsorted_keymap[] =
     { VK_MULTIPLY, GLWT_KEY_KEYPAD_MULTIPLY },
     { VK_ADD, GLWT_KEY_KEYPAD_PLUS },
     { VK_SUBTRACT, GLWT_KEY_KEYPAD_MINUS },
-{ VK_RETURN, GLWT_KEY_KEYPAD_ENTER }, /* lParam & 0x1000000 */
+    { VK_RETURN, GLWT_KEY_KEYPAD_ENTER },
 
     { VK_UP, GLWT_KEY_UP },
     { VK_DOWN, GLWT_KEY_DOWN },

@@ -62,7 +62,7 @@ error:
 
     wglMakeCurrent(old_hdc, old_context);
     if(temp_context)
-	wglDeleteContext(temp_context);
+        wglDeleteContext(temp_context);
 
     glwtQuitWGL();
     return -1;
