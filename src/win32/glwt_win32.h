@@ -4,15 +4,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <win32/keymap.h>
-
 struct glwt_win32
 {
     HINSTANCE hinstance;
     ATOM classatom;
     HWND dummy_hwnd;
     HDC dummy_hdc;
-    struct keymap keymap;
 };
 
 struct glwt_window_win32

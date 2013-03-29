@@ -6,8 +6,6 @@
 #include <X11/Xutil.h>
 #include <X11/XKBlib.h>
 
-#include <x11/keymap.h>
-
 #define GLWT_X11_ATOMS(ATOM) \
     ATOM(_NET_SUPPORTED) \
     ATOM(WM_DELETE_WINDOW) \
@@ -30,8 +28,6 @@ struct glwt_x11
         GLWT_X11_ATOMS(GLWT_X11_ATOM_DECLARE)
 #undef GLWT_X11_ATOM_DECLARE
     } atoms;
-
-    struct keymap keymap;
 };
 
 struct glwt_window_x11

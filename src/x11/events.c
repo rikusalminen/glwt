@@ -27,6 +27,123 @@ static int mapButtons(unsigned int state)
         | ((state & Button5Mask) ? (1 << 4) : 0);
 }
 
+static int translate_key(int xkeysym)
+{
+    switch(xkeysym)
+    {
+        case XK_BackSpace: return GLWT_KEY_BACKSPACE;
+        case XK_Tab: return GLWT_KEY_TAB;
+        case XK_Return: return GLWT_KEY_RETURN;
+        case XK_Escape: return GLWT_KEY_ESCAPE;
+        case XK_space: return GLWT_KEY_SPACE;
+
+        case XK_plus: return GLWT_KEY_PLUS;
+        case XK_comma: return GLWT_KEY_COMMA;
+        case XK_minus: return GLWT_KEY_MINUS;
+        case XK_period: return GLWT_KEY_PERIOD;
+        case XK_slash: return GLWT_KEY_SLASH;
+
+        case XK_0: return GLWT_KEY_0;
+        case XK_1: return GLWT_KEY_1;
+        case XK_2: return GLWT_KEY_2;
+        case XK_3: return GLWT_KEY_3;
+        case XK_4: return GLWT_KEY_4;
+        case XK_5: return GLWT_KEY_5;
+        case XK_6: return GLWT_KEY_6;
+        case XK_7: return GLWT_KEY_7;
+        case XK_8: return GLWT_KEY_8;
+        case XK_9: return GLWT_KEY_9;
+
+        case XK_a: return GLWT_KEY_A;
+        case XK_b: return GLWT_KEY_B;
+        case XK_c: return GLWT_KEY_C;
+        case XK_d: return GLWT_KEY_D;
+        case XK_e: return GLWT_KEY_E;
+        case XK_f: return GLWT_KEY_F;
+        case XK_g: return GLWT_KEY_G;
+        case XK_h: return GLWT_KEY_H;
+        case XK_i: return GLWT_KEY_I;
+        case XK_j: return GLWT_KEY_J;
+        case XK_k: return GLWT_KEY_K;
+        case XK_l: return GLWT_KEY_L;
+        case XK_m: return GLWT_KEY_M;
+        case XK_n: return GLWT_KEY_N;
+        case XK_o: return GLWT_KEY_O;
+        case XK_p: return GLWT_KEY_P;
+        case XK_q: return GLWT_KEY_Q;
+        case XK_r: return GLWT_KEY_R;
+        case XK_s: return GLWT_KEY_S;
+        case XK_t: return GLWT_KEY_T;
+        case XK_u: return GLWT_KEY_U;
+        case XK_v: return GLWT_KEY_V;
+        case XK_w: return GLWT_KEY_W;
+        case XK_x: return GLWT_KEY_X;
+        case XK_y: return GLWT_KEY_Y;
+        case XK_z: return GLWT_KEY_Z;
+
+        case XK_Delete: return GLWT_KEY_DELETE;
+
+        case XK_KP_Insert: return GLWT_KEY_KEYPAD_0;
+        case XK_KP_End: return GLWT_KEY_KEYPAD_1;
+        case XK_KP_Down: return GLWT_KEY_KEYPAD_2;
+        case XK_KP_Page_Down: return GLWT_KEY_KEYPAD_3;
+        case XK_KP_Left: return GLWT_KEY_KEYPAD_4;
+        case XK_KP_Begin: return GLWT_KEY_KEYPAD_5;
+        case XK_KP_Right: return GLWT_KEY_KEYPAD_6;
+        case XK_KP_Home: return GLWT_KEY_KEYPAD_7;
+        case XK_KP_Up: return GLWT_KEY_KEYPAD_8;
+        case XK_KP_Page_Up: return GLWT_KEY_KEYPAD_9;
+        case XK_KP_Delete: return GLWT_KEY_KEYPAD_SEPARATOR;
+        case XK_KP_Divide: return GLWT_KEY_KEYPAD_DIVIDE;
+        case XK_KP_Multiply: return GLWT_KEY_KEYPAD_MULTIPLY;
+        case XK_KP_Add: return GLWT_KEY_KEYPAD_PLUS;
+        case XK_KP_Subtract: return GLWT_KEY_KEYPAD_MINUS;
+        case XK_KP_Enter: return GLWT_KEY_KEYPAD_ENTER;
+
+        case XK_Up: return GLWT_KEY_UP;
+        case XK_Down: return GLWT_KEY_DOWN;
+        case XK_Left: return GLWT_KEY_LEFT;
+        case XK_Right: return GLWT_KEY_RIGHT;
+        case XK_Page_Up: return GLWT_KEY_PAGE_UP;
+        case XK_Page_Down: return GLWT_KEY_PAGE_DOWN;
+        case XK_Home: return GLWT_KEY_HOME;
+        case XK_End: return GLWT_KEY_END;
+        case XK_Insert: return GLWT_KEY_INSERT;
+
+        case XK_F1: return GLWT_KEY_F1;
+        case XK_F2: return GLWT_KEY_F2;
+        case XK_F3: return GLWT_KEY_F3;
+        case XK_F4: return GLWT_KEY_F4;
+        case XK_F5: return GLWT_KEY_F5;
+        case XK_F6: return GLWT_KEY_F6;
+        case XK_F7: return GLWT_KEY_F7;
+        case XK_F8: return GLWT_KEY_F8;
+        case XK_F9: return GLWT_KEY_F9;
+        case XK_F10: return GLWT_KEY_F10;
+        case XK_F11: return GLWT_KEY_F11;
+        case XK_F12: return GLWT_KEY_F12;
+
+        case XK_Shift_L: return GLWT_KEY_LSHIFT;
+        case XK_Shift_R: return GLWT_KEY_RSHIFT;
+        case XK_Control_L: return GLWT_KEY_LCTRL;
+        case XK_Control_R: return GLWT_KEY_RCTRL;
+        case XK_Alt_L: return GLWT_KEY_LALT;
+        case XK_Alt_R: return GLWT_KEY_RALT;
+        case XK_Super_L: return GLWT_KEY_LSUPER;
+        case XK_Super_R: return GLWT_KEY_RSUPER;
+        case XK_Menu: return GLWT_KEY_MENU;
+        case XK_ISO_Level3_Shift: return GLWT_KEY_ALTGR;
+        case XK_Num_Lock: return GLWT_KEY_NUM_LOCK;
+        case XK_Caps_Lock: return GLWT_KEY_CAPS_LOCK;
+        case XK_Scroll_Lock: return GLWT_KEY_SCROLL_LOCK;
+
+        default:
+            break;
+    }
+
+    return GLWT_KEY_UNKNOWN;
+}
+
 static int xlib_handle_event()
 {
     XEvent event;
@@ -86,7 +203,7 @@ static int xlib_handle_event()
                     GLWTWindowEvent e;
                     e.window = win;
                     e.type = event.type == KeyPress ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP;
-                    e.key.keysym = keymap_lookup(&glwt.x11.keymap, XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0));
+                    e.key.keysym = translate_key(XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0));
                     e.key.scancode = event.xkey.keycode;
                     e.key.mod = mapKeyMod(event.xkey.state);
                     win->win_callback(win, &e, win->userdata);

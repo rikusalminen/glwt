@@ -22,36 +22,21 @@ static int translate_key(WPARAM wParam, LPARAM lParam)
     {
         switch(MapVirtualKeyW(HIWORD(lParam) & 0xFF, MAPVK_VSC_TO_VK))
         {
-            case VK_INSERT:
-                return GLWT_KEY_KEYPAD_0;
-            case VK_END:
-                return GLWT_KEY_KEYPAD_1;
-            case VK_DOWN:
-                return GLWT_KEY_KEYPAD_2;
-            case VK_NEXT:
-                return GLWT_KEY_KEYPAD_3;
-            case VK_LEFT:
-                return GLWT_KEY_KEYPAD_4;
-            case VK_CLEAR:
-                return GLWT_KEY_KEYPAD_5;
-            case VK_RIGHT:
-                return GLWT_KEY_KEYPAD_6;
-            case VK_HOME:
-                return GLWT_KEY_KEYPAD_7;
-            case VK_UP:
-                return GLWT_KEY_KEYPAD_8;
-            case VK_PRIOR:
-                return GLWT_KEY_KEYPAD_9;
-            case VK_DIVIDE:
-                return GLWT_KEY_KEYPAD_DIVIDE;
-            case VK_MULTIPLY:
-                return GLWT_KEY_KEYPAD_MULTIPLY;
-            case VK_SUBTRACT:
-                return GLWT_KEY_KEYPAD_MINUS;
-            case VK_ADD:
-                return GLWT_KEY_KEYPAD_PLUS;
-            case VK_DELETE:
-                return GLWT_KEY_KEYPAD_SEPARATOR;
+            case VK_INSERT: return GLWT_KEY_KEYPAD_0;
+            case VK_END: return GLWT_KEY_KEYPAD_1;
+            case VK_DOWN: return GLWT_KEY_KEYPAD_2;
+            case VK_NEXT: return GLWT_KEY_KEYPAD_3;
+            case VK_LEFT: return GLWT_KEY_KEYPAD_4;
+            case VK_CLEAR: return GLWT_KEY_KEYPAD_5;
+            case VK_RIGHT: return GLWT_KEY_KEYPAD_6;
+            case VK_HOME: return GLWT_KEY_KEYPAD_7;
+            case VK_UP: return GLWT_KEY_KEYPAD_8;
+            case VK_PRIOR: return GLWT_KEY_KEYPAD_9;
+            case VK_DIVIDE: return GLWT_KEY_KEYPAD_DIVIDE;
+            case VK_MULTIPLY: return GLWT_KEY_KEYPAD_MULTIPLY;
+            case VK_SUBTRACT: return GLWT_KEY_KEYPAD_MINUS;
+            case VK_ADD: return GLWT_KEY_KEYPAD_PLUS;
+            case VK_DELETE: return GLWT_KEY_KEYPAD_SEPARATOR;
             default:
                 break;
         }
@@ -60,7 +45,7 @@ static int translate_key(WPARAM wParam, LPARAM lParam)
     switch(wParam)
     {
         case VK_SHIFT:
-            return (((lParam & 0x01ff0000) >> 16) == MapVirtualKeyW(VK_RSHIFT, MAPVK_VK_TO_VSC)) ?
+            return ((unsigned)((lParam & 0x01ff0000) >> 16) == MapVirtualKeyW(VK_RSHIFT, MAPVK_VK_TO_VSC)) ?
                 GLWT_KEY_RSHIFT : GLWT_KEY_LSHIFT;
         case VK_CONTROL:
             return (lParam & 0x01000000) ? GLWT_KEY_RCTRL : GLWT_KEY_LCTRL;
@@ -68,8 +53,110 @@ static int translate_key(WPARAM wParam, LPARAM lParam)
             return (lParam & 0x01000000) ? GLWT_KEY_RALT : GLWT_KEY_LALT;
         case VK_RETURN:
             return (lParam & 0x01000000) ? GLWT_KEY_KEYPAD_ENTER : GLWT_KEY_RETURN;
+
+        case VK_BACK: return GLWT_KEY_BACKSPACE;
+        case VK_TAB: return GLWT_KEY_TAB;
+        case VK_ESCAPE: return GLWT_KEY_ESCAPE;
+        case VK_SPACE: return GLWT_KEY_SPACE;
+
+        case VK_OEM_PLUS: return GLWT_KEY_PLUS;
+        case VK_OEM_COMMA: return GLWT_KEY_COMMA;
+        case VK_OEM_MINUS: return GLWT_KEY_MINUS;
+        case VK_OEM_PERIOD: return GLWT_KEY_PERIOD;
+        case VK_DIVIDE: return GLWT_KEY_SLASH;
+
+        case (int)('0'): return GLWT_KEY_0;
+        case (int)('1'): return GLWT_KEY_1;
+        case (int)('2'): return GLWT_KEY_2;
+        case (int)('3'): return GLWT_KEY_3;
+        case (int)('4'): return GLWT_KEY_4;
+        case (int)('5'): return GLWT_KEY_5;
+        case (int)('6'): return GLWT_KEY_6;
+        case (int)('7'): return GLWT_KEY_7;
+        case (int)('8'): return GLWT_KEY_8;
+        case (int)('9'): return GLWT_KEY_9;
+
+        case (int)('A'): return GLWT_KEY_A;
+        case (int)('B'): return GLWT_KEY_B;
+        case (int)('C'): return GLWT_KEY_C;
+        case (int)('D'): return GLWT_KEY_D;
+        case (int)('E'): return GLWT_KEY_E;
+        case (int)('F'): return GLWT_KEY_F;
+        case (int)('G'): return GLWT_KEY_G;
+        case (int)('H'): return GLWT_KEY_H;
+        case (int)('I'): return GLWT_KEY_I;
+        case (int)('J'): return GLWT_KEY_J;
+        case (int)('K'): return GLWT_KEY_K;
+        case (int)('L'): return GLWT_KEY_L;
+        case (int)('M'): return GLWT_KEY_M;
+        case (int)('N'): return GLWT_KEY_N;
+        case (int)('O'): return GLWT_KEY_O;
+        case (int)('P'): return GLWT_KEY_P;
+        case (int)('Q'): return GLWT_KEY_Q;
+        case (int)('R'): return GLWT_KEY_R;
+        case (int)('S'): return GLWT_KEY_S;
+        case (int)('T'): return GLWT_KEY_T;
+        case (int)('U'): return GLWT_KEY_U;
+        case (int)('V'): return GLWT_KEY_V;
+        case (int)('W'): return GLWT_KEY_W;
+        case (int)('X'): return GLWT_KEY_X;
+        case (int)('Y'): return GLWT_KEY_Y;
+        case (int)('Z'): return GLWT_KEY_Z;
+
+        case VK_DELETE: return GLWT_KEY_DELETE;
+
+        case VK_NUMPAD0: return GLWT_KEY_KEYPAD_0;
+        case VK_NUMPAD1: return GLWT_KEY_KEYPAD_1;
+        case VK_NUMPAD2: return GLWT_KEY_KEYPAD_2;
+        case VK_NUMPAD3: return GLWT_KEY_KEYPAD_3;
+        case VK_NUMPAD4: return GLWT_KEY_KEYPAD_4;
+        case VK_NUMPAD5: return GLWT_KEY_KEYPAD_5;
+        case VK_NUMPAD6: return GLWT_KEY_KEYPAD_6;
+        case VK_NUMPAD7: return GLWT_KEY_KEYPAD_7;
+        case VK_NUMPAD8: return GLWT_KEY_KEYPAD_8;
+        case VK_NUMPAD9: return GLWT_KEY_KEYPAD_9;
+        case VK_DECIMAL: return GLWT_KEY_KEYPAD_SEPARATOR;
+        case VK_MULTIPLY: return GLWT_KEY_KEYPAD_MULTIPLY;
+        case VK_ADD: return GLWT_KEY_KEYPAD_PLUS;
+        case VK_SUBTRACT: return GLWT_KEY_KEYPAD_MINUS;
+
+        case VK_UP: return GLWT_KEY_UP;
+        case VK_DOWN: return GLWT_KEY_DOWN;
+        case VK_LEFT: return GLWT_KEY_LEFT;
+        case VK_RIGHT: return GLWT_KEY_RIGHT;
+        case VK_PRIOR: return GLWT_KEY_PAGE_UP;
+        case VK_NEXT: return GLWT_KEY_PAGE_DOWN;
+        case VK_HOME: return GLWT_KEY_HOME;
+        case VK_END: return GLWT_KEY_END;
+        case VK_INSERT: return GLWT_KEY_INSERT;
+
+        case VK_F1: return GLWT_KEY_F1;
+        case VK_F2: return GLWT_KEY_F2;
+        case VK_F3: return GLWT_KEY_F3;
+        case VK_F4: return GLWT_KEY_F4;
+        case VK_F5: return GLWT_KEY_F5;
+        case VK_F6: return GLWT_KEY_F6;
+        case VK_F7: return GLWT_KEY_F7;
+        case VK_F8: return GLWT_KEY_F8;
+        case VK_F9: return GLWT_KEY_F9;
+        case VK_F10: return GLWT_KEY_F10;
+        case VK_F11: return GLWT_KEY_F11;
+        case VK_F12: return GLWT_KEY_F12;
+
+        case VK_LSHIFT: return GLWT_KEY_LSHIFT;
+        case VK_RSHIFT: return GLWT_KEY_RSHIFT;
+        case VK_LCONTROL: return GLWT_KEY_LCTRL;
+        case VK_RCONTROL: return GLWT_KEY_RCTRL;
+        case VK_LMENU: return GLWT_KEY_LALT;
+        case VK_RMENU: return GLWT_KEY_RALT;
+        case VK_LWIN: return GLWT_KEY_LSUPER;
+        case VK_RWIN: return GLWT_KEY_RSUPER;
+        case VK_NUMLOCK: return GLWT_KEY_NUM_LOCK;
+        case VK_CAPITAL: return GLWT_KEY_CAPS_LOCK;
+        case VK_SCROLL: return GLWT_KEY_SCROLL_LOCK;
+
         default:
-            return keymap_lookup(&glwt.win32.keymap, (int)wParam);
+            break;
     }
 
     return GLWT_KEY_UNKNOWN;
@@ -100,7 +187,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             case WM_KEYDOWN:
             case WM_SYSKEYUP:
             case WM_SYSKEYDOWN:
-				if(win->win_callback)
+                if(win->win_callback)
                 {
                     GLWTWindowEvent event;
                     event.window = win;

@@ -54,8 +54,6 @@ int glwtInit(
     glwt.error_callback = error_callback;
     glwt.userdata = userdata;
 
-    keymap_init(&glwt.x11.keymap);
-
     XInitThreads();
 
     XSetIOErrorHandler(xlib_io_error);

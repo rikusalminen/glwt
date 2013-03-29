@@ -39,8 +39,6 @@ int glwtInit(
     glwt.error_callback = error_callback;
     glwt.userdata = userdata;
 
-    keymap_init(&glwt.win32.keymap);
-
     glwt.win32.hinstance = GetModuleHandle(0);
     if(!glwt.win32.hinstance)
     {
