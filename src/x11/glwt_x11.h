@@ -22,7 +22,6 @@ struct glwt_x11
     int screen_num;
     Visual *visual;
     int depth;
-    int visual_id;
     Colormap colormap;
 
     struct

@@ -98,7 +98,7 @@ int glwtInitGLX(const GLWTConfig *config)
     glwt.glx.fbconfig = fbconfigs[0];
     XFree(fbconfigs);
 
-    glXGetFBConfigAttrib(glwt.x11.display, glwt.glx.fbconfig, GLX_VISUAL_ID, &glwt.x11.visual_id);
+    glXGetFBConfigAttrib(glwt.x11.display, glwt.glx.fbconfig, GLX_VISUAL_ID, &glwt.glx.visual_id);
 
     return 0;
 }

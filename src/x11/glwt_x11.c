@@ -91,7 +91,11 @@ int glwtInit(
         goto error;
 
     XVisualInfo template;
-    template.visualid = glwt.x11.visual_id;
+#ifdef GLWT_USE_EGL
+    template.visualid = glwt.egl.visual_id;
+#else
+    template.visualid = glwt.glx.visual_id;
+#endif
 
     int num_vis;
     XVisualInfo *vi = XGetVisualInfo(glwt.x11.display, VisualIDMask, &template, &num_vis);

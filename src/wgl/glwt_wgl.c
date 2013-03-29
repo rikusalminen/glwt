@@ -47,7 +47,7 @@ int glwtInitWGL(const GLWTConfig *config)
 
     // Required: WGL_ARB_extensions_string, WGL_ARB_pixel_format, WGL_ARB_multisample, WGL_ARB_make_current_read, WGL_EXT_swap_control
 
-    if(!wglChoosePixelFormatARB(glwt.win32.dummy_hdc, pixel_attribs, NULL, 1, &glwt.win32.pixel_format, &num_formats) ||
+    if(!wglChoosePixelFormatARB(glwt.win32.dummy_hdc, pixel_attribs, NULL, 1, &glwt.wgl.pixel_format, &num_formats) ||
         num_formats == 0)
     {
         glwtWin32Error("wglChoosePixelFormatARB failed");

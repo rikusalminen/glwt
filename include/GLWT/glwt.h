@@ -80,10 +80,10 @@ int glwtWindowClosed(GLWTWindow *window);
 void glwtWindowShow(GLWTWindow *window, int show);
 void glwtWindowSetTitle(GLWTWindow *window, const char *title);
 
-void glwtMakeCurrent(GLWTWindow *win);
-void glwtSwapBuffers(GLWTWindow *win);
-void glwtSwapInterval(GLWTWindow *win, int interval);
-void glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
+int glwtMakeCurrent(GLWTWindow *win);
+int glwtSwapBuffers(GLWTWindow *win);
+int glwtSwapInterval(GLWTWindow *win, int interval);
+int glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
 
 int glwtEventHandle(int wait);
 

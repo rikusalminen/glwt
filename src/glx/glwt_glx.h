@@ -6,6 +6,7 @@
 struct glwt_glx
 {
     GLXFBConfig fbconfig;
+    int visual_id;
 };
 
 struct glwt_window_glx

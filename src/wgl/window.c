@@ -43,30 +43,53 @@ void glwtWindowDestroyWGL(GLWTWindow *win)
         wglDeleteContext(win->wgl.context);
 }
 
-void glwtMakeCurrent(GLWTWindow *win)
+int glwtMakeCurrent(GLWTWindow *win)
 {
-    wglMakeContextCurrentARB(win->win32.hdc, win->win32.hdc, win->wgl.context);
+    if(!wglMakeContextCurrentARB(
+        win ? win->win32.hdc : 0,
+        win ? win->win32.hdc : 0,
+        win ? win->wgl.context : 0))
+    {
+        glwtWin32Error("wglMakeContextCurrentARB failed");
+        return -1;
+    }
+
+    return 0;
 }
 
-void glwtSwapBuffers(GLWTWindow *win)
+int glwtSwapBuffers(GLWTWindow *win)
 {
-    SwapBuffers(win->win32.hdc);
+    if(!SwapBuffers(win->win32.hdc))
+    {
+        glwtWin32Error("SwapBuffers failed");
+        return -1;
+    }
+
+    return 0;
 }
 
-void glwtSwapInterval(GLWTWindow *win, int interval)
+int glwtSwapInterval(GLWTWindow *win, int interval)
 {
     (void)win;
-    wglSwapIntervalEXT(interval);
+    if(!wglSwapIntervalEXT(interval))
+    {
+        glwtWin32Error("wglSwapIntervalEXT failed");
+        return -1;
+    }
+
+    return 0;
 }
 
-void glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
+int glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
 {
     RECT rect;
     if(!GetClientRect(win->win32.hwnd, &rect))
     {
         glwtWin32Error("GetClientRect failed");
+        return -1;
     }
 
     *width = rect.right - rect.left;
     *height = rect.bottom - rect.top;
+    return 0;
 }

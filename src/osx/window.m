@@ -729,11 +729,12 @@ void glwtWindowSetTitle(GLWTWindow *win, const char *title)
     [win->osx.nswindow setTitle:[NSString stringWithUTF8String:title]];
 }
 
-void glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
+int glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
 {
     NSRect frame = [[win->osx.nswindow contentView] frame];
     *width = (int)frame.size.width;
     *height = (int)frame.size.height;
+    return 0;
 }
 
 void glwtWindowShow(GLWTWindow *win, int show)
@@ -742,24 +743,28 @@ void glwtWindowShow(GLWTWindow *win, int show)
         [win->osx.nswindow makeKeyAndOrderFront:nil];
     else
         [win->osx.nswindow orderOut:nil];
+    return 0;
 }
 
-void glwtMakeCurrent(GLWTWindow *win)
+int glwtMakeCurrent(GLWTWindow *win)
 {
     if (!win)
         [NSOpenGLContext clearCurrentContext];
     else
         [win->osx.ctx makeCurrentContext];
+    return 0;
 }
 
-void glwtSwapBuffers(GLWTWindow *win)
+int glwtSwapBuffers(GLWTWindow *win)
 {
     [win->osx.ctx flushBuffer];
+    return 0;
 }
 
-void glwtSwapInterval(GLWTWindow *win, int interval)
+int glwtSwapInterval(GLWTWindow *win, int interval)
 {
     GLint sync = interval;
 
     [win->osx.ctx setValues:&sync forParameter:NSOpenGLCPSwapInterval];
+    return 0;
 }

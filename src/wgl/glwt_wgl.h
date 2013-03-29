@@ -5,7 +5,7 @@
 
 struct glwt_wgl
 {
-    int dummy;
+    int pixel_format;
 };
 
 struct glwt_window_wgl

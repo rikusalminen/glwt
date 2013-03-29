@@ -55,7 +55,7 @@ GLWTWindow *glwtWindowCreate(
     }
 
 #ifdef GLWT_USE_EGL
-    if(glwtWindowCreateEGL(win, share) != 0)
+    if(glwtWindowCreateEGL(win, share, win->x11.window) != 0)
 #else
     if(glwtWindowCreateGLX(win, share) != 0)
 #endif

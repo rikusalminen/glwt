@@ -10,7 +10,7 @@ struct glwt_egl
     EGLDisplay display;
     int version_major, version_minor;
     EGLConfig config;
-    int egl_api;
+    int visual_id;
 };
 
 struct glwt_window_egl
@@ -22,7 +22,10 @@ struct glwt_window_egl
 int glwtInitEGL(const GLWTConfig *config);
 void glwtQuitEGL();
 
-int glwtWindowCreateEGL(GLWTWindow *win, GLWTWindow *share);
+int glwtWindowCreateContextEGL(GLWTWindow *win, GLWTWindow *share);
+int glwtWindowCreateSurfaceEGL(GLWTWindow *win, EGLNativeWindowType native_window);
+int glwtWindowCreateEGL(GLWTWindow *win, GLWTWindow *share, EGLNativeWindowType native_window);
+void glwtWindowDestroySurfaceEGL(GLWTWindow *win);
 void glwtWindowDestroyEGL(GLWTWindow *win);
 
 #endif

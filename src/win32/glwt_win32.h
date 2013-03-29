@@ -12,7 +12,6 @@ struct glwt_win32
     ATOM classatom;
     HWND dummy_hwnd;
     HDC dummy_hdc;
-    int pixel_format;
     struct keymap keymap;
 };
 

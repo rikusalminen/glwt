@@ -49,32 +49,38 @@ void glwtWindowDestroyGLX(GLWTWindow *win)
         glXDestroyContext(glwt.x11.display, win->glx.context);
 }
 
-void glwtMakeCurrent(GLWTWindow *win)
+int glwtMakeCurrent(GLWTWindow *win)
 {
-    if(win)
-        glXMakeContextCurrent(
+    if(!glXMakeContextCurrent(
             glwt.x11.display,
-            win->glx.surface,
-            win->glx.surface,
-            win->glx.context);
-    else
-        glXMakeContextCurrent(glwt.x11.display, 0, 0, 0);
+            win ? win->glx.surface : 0,
+            win ? win->glx.surface : 0,
+            win ? win->glx.context : 0))
+    {
+        glwtErrorPrintf("glXMakeContextCurrent failed");
+        return -1;
+    }
+
+    return 0;
 }
 
-void glwtSwapBuffers(GLWTWindow *win)
+int glwtSwapBuffers(GLWTWindow *win)
 {
     glXSwapBuffers(glwt.x11.display, win->glx.surface);
+    return 0;
 }
 
-void glwtSwapInterval(GLWTWindow *win, int interval)
+int glwtSwapInterval(GLWTWindow *win, int interval)
 {
     glXSwapIntervalEXT(glwt.x11.display, win->glx.surface, interval);
+    return 0;
 }
 
-void glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
+int glwtWindowGetSize(GLWTWindow *win, int *width, int *height)
 {
     unsigned int w, h;
     glXQueryDrawable(glwt.x11.display, win->glx.surface, GLX_WIDTH, &w);
     glXQueryDrawable(glwt.x11.display, win->glx.surface, GLX_HEIGHT, &h);
     *width = (int)w; *height = (int)h;
+    return 0;
 }

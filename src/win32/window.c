@@ -63,14 +63,21 @@ GLWTWindow *glwtWindowCreate(
         goto error;
     }
 
-    if(!SetPixelFormat(win->win32.hdc, glwt.win32.pixel_format, &pfd))
+    if(!SetPixelFormat(
+        win->win32.hdc,
+#ifdef GLWT_USE_EGL
+        glwt.egl.visual_id,
+#else
+        glwt.wgl.pixel_format,
+#endif
+        &pfd))
     {
         glwtWin32Error("SetPixelFormat failed");
         goto error;
     }
 
 #ifdef GLWT_USE_EGL
-    if(glwtWindowCreateEGL(win, share))
+    if(glwtWindowCreateEGL(win, share, win->win32.hwnd))
 #else
     if(glwtWindowCreateWGL(win, share))
 #endif

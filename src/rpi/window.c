@@ -57,7 +57,7 @@ GLWTWindow *glwtWindowCreate(
     win->rpi.nativewindow.height = height;
     vc_dispmanx_update_submit_sync( dispman_update );
 
-    if(glwtWindowCreateEGL(win, share) != 0)
+    if(glwtWindowCreateEGL(win, share, win->rpi.nativewindow) != 0)
         goto error;
 
     return win;
