@@ -8,19 +8,11 @@ int glwtWindowCreateWGL(GLWTWindow *win, GLWTWindow *share)
         WGL_CONTEXT_FLAGS_ARB,
             ((glwt.api & GLWT_PROFILE_DEBUG) ? WGL_CONTEXT_DEBUG_BIT_ARB : 0) |
             ((glwt.api & GLWT_PROFILE_ROBUSTNESS) ? WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB : 0),
-#if 0
         WGL_CONTEXT_PROFILE_MASK_ARB,
-#ifdef WGL_EXT_create_context_es2_profile
-            ((glwt.api & GLWT_API_MASK) == GLWT_API_OPENGL_ES && glwt.api_version_major == 2 ?
-                WGL_CONTEXT_ES2_PROFILE_BIT_EXT : 0) |
-#endif
-#ifdef WGL_EXT_create_context_es_profile
-            ((glwt.api & GLWT_API_MASK) == GLWT_API_OPENGL_ES && glwt.api_version_major == 1 ?
-                WGL_CONTEXT_ES_PROFILE_BIT_EXT : 0) |
-#endif
-            ((glwt.api & GLWT_PROFILE_CORE) ?  WGL_CONTEXT_CORE_PROFILE_BIT_ARB : 0) |
-            ((glwt.api & GLWT_PROFILE_COMPATIBILITY) ? WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB : 0),
-#endif
+            ((glwt.api & GLWT_API_MASK) != GLWT_API_OPENGL_ES ?
+                ((glwt.api & GLWT_PROFILE_COMPATIBILITY) ?
+                    WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB : WGL_CONTEXT_CORE_PROFILE_BIT_ARB) : 0) |
+            ((glwt.api & GLWT_API_MASK) == GLWT_API_OPENGL_ES ? WGL_CONTEXT_ES2_PROFILE_BIT_EXT : 0),
             0, 0,
     };
 

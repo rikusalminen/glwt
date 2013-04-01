@@ -7,7 +7,7 @@ int glwtWindowCreateGLX(GLWTWindow *win, GLWTWindow *share)
         glwt.glx.fbconfig,
         win->x11.window, 0)) == 0)
     {
-        glwtErrorPrintf("GLX Surface create failed");
+        glwtErrorPrintf("glXCreateWindow failed");
         goto error;
     }
 
@@ -15,9 +15,11 @@ int glwtWindowCreateGLX(GLWTWindow *win, GLWTWindow *share)
         GLX_CONTEXT_MAJOR_VERSION_ARB, glwt.api_version_major != 0 ? glwt.api_version_major : 1,
         GLX_CONTEXT_MINOR_VERSION_ARB, glwt.api_version_minor,
         GLX_CONTEXT_PROFILE_MASK_ARB,
-            (glwt.api & GLWT_PROFILE_COMPATIBILITY) ?
-                GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB :
-                GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+            ((glwt.api & GLWT_API_MASK) != GLWT_API_OPENGL_ES ?
+                ((glwt.api & GLWT_PROFILE_COMPATIBILITY) ?
+                    GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB : GLX_CONTEXT_CORE_PROFILE_BIT_ARB) : 0) |
+            ((glwt.api & GLWT_API_MASK) == GLWT_API_OPENGL_ES ?
+                GLX_CONTEXT_ES2_PROFILE_BIT_EXT : 0),
         GLX_CONTEXT_FLAGS_ARB,
             (glwt.api & GLWT_PROFILE_DEBUG) ? GLX_CONTEXT_DEBUG_BIT_ARB : 0 |
             (glwt.api & GLWT_PROFILE_ROBUSTNESS) ? GLX_CONTEXT_ROBUST_ACCESS_BIT_ARB : 0,
@@ -31,7 +33,7 @@ int glwtWindowCreateGLX(GLWTWindow *win, GLWTWindow *share)
         True, // direct
         context_attribs)) == 0)
     {
-        glwtErrorPrintf("GLX context create failed");
+        glwtErrorPrintf("glXCreateContextAttribsARB failed");
         goto error;
     }
 

@@ -743,7 +743,6 @@ void glwtWindowShow(GLWTWindow *win, int show)
         [win->osx.nswindow makeKeyAndOrderFront:nil];
     else
         [win->osx.nswindow orderOut:nil];
-    return 0;
 }
 
 int glwtMakeCurrent(GLWTWindow *win)

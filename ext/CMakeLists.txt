@@ -1,2 +1,1 @@
-set(GLXW_USE_EGL ${GLWT_USE_EGL})
-add_subdirectory(glxw)
+add_subdirectory(glxw EXCLUDE_FROM_ALL)

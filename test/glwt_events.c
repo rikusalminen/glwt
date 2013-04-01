@@ -2,6 +2,12 @@
 
 #include <GLWT/glwt.h>
 
+#ifdef GLWT_TESTS_GLES
+#include <GLXW/glxw_es2.h>
+#else
+#include <GLXW/glxw.h>
+#endif
+
 static void error_callback(const char *msg, void *userdata)
 {
     (void)userdata;
@@ -20,6 +26,11 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
             break;
         case GLWT_WINDOW_EXPOSE:
             printf("Window exposed\n");
+            {
+                glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glwtSwapBuffers(window);
+            }
             break;
         case GLWT_WINDOW_RESIZE:
             printf("Window resized  width: %d  height: %d\n", event->resize.width, event->resize.height);
@@ -62,17 +73,16 @@ int main(int argc, char *argv[])
     int err = -1;
     GLWTWindow *window = 0;
     GLWTConfig glwt_config = {
-        /* .red_bits = */ 0,
-        /* .green_bits = */ 0,
-        /* .blue_bits = */ 0,
-        /* .alpha_bits = */ 0,
-        /* .depth_bits = */ 0,
-        /* .stencil_bits = */ 0,
-        /* .samples = */ 0,
-        /* .sample_buffers = */ 0,
-        /* .api = */ GLWT_API_ANY | GLWT_PROFILE_DEBUG,
-        /* .api_version_major = */ 0,
-        /* .api_version_minor = */ 0
+        0, 0, 0, 0,
+        0, 0,
+        0, 0,
+#ifdef GLWT_TESTS_GLES
+        GLWT_API_OPENGL_ES | GLWT_PROFILE_DEBUG,
+        2, 0,
+#else
+        GLWT_API_OPENGL | GLWT_PROFILE_DEBUG,
+        0, 0,
+#endif
     };
 
     int width, height;
@@ -91,6 +101,10 @@ int main(int argc, char *argv[])
     glwtMakeCurrent(window);
     glwtSwapInterval(window, 1);
 
+    glxwInit();
+
+    printf("%s\n", (const char*)glGetString(GL_VERSION));
+
     glwtWindowGetSize(window, &width, &height);
     printf("Window size: %d x %d\n", width, height);
 
@@ -98,9 +112,9 @@ int main(int argc, char *argv[])
     {
         if(glwtEventHandle(1) != 0)
             goto error;
-
-        glwtSwapBuffers(window);
     }
+
+    glwtMakeCurrent(0);
 
     err = 0;
 error:
