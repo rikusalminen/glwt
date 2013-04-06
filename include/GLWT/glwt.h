@@ -29,27 +29,29 @@ typedef struct GLWTConfig
 
 typedef struct GLWTWindow GLWTWindow;
 
+typedef enum GLWTWindowEventType {
+    GLWT_WINDOW_NO_EVENT = 0,
+    GLWT_WINDOW_CLOSE,
+    GLWT_WINDOW_EXPOSE,
+    GLWT_WINDOW_RESIZE,
+    GLWT_WINDOW_SHOW,
+    GLWT_WINDOW_HIDE,
+    GLWT_WINDOW_FOCUS_IN,
+    GLWT_WINDOW_FOCUS_OUT,
+    GLWT_WINDOW_KEY_UP,
+    GLWT_WINDOW_KEY_DOWN,
+    GLWT_WINDOW_BUTTON_UP,
+    GLWT_WINDOW_BUTTON_DOWN,
+    GLWT_WINDOW_MOUSE_MOTION,
+    GLWT_WINDOW_MOUSE_ENTER,
+    GLWT_WINDOW_MOUSE_LEAVE,
+} GLWTWindowEventType;
+
 typedef struct GLWTWindowEvent
 {
     GLWTWindow *window;
 
-    enum {
-        GLWT_WINDOW_NO_EVENT = 0,
-        GLWT_WINDOW_CLOSE,
-        GLWT_WINDOW_EXPOSE,
-        GLWT_WINDOW_RESIZE,
-        GLWT_WINDOW_SHOW,
-        GLWT_WINDOW_HIDE,
-        GLWT_WINDOW_FOCUS_IN,
-        GLWT_WINDOW_FOCUS_OUT,
-        GLWT_WINDOW_KEY_UP,
-        GLWT_WINDOW_KEY_DOWN,
-        GLWT_WINDOW_BUTTON_UP,
-        GLWT_WINDOW_BUTTON_DOWN,
-        GLWT_WINDOW_MOUSE_MOTION,
-        GLWT_WINDOW_MOUSE_ENTER,
-        GLWT_WINDOW_MOUSE_LEAVE,
-    } type;
+    GLWTWindowEventType type;
 
     union {
         struct { int width, height; } resize;
