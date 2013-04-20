@@ -70,6 +70,7 @@ int glwtInit(const GLWTConfig *config,
              void (*error_callback)(const char *msg, void *userdata),
              void *userdata)
 {
+    BOOL nibLoaded = NO;
     glwt.error_callback = error_callback;
     glwt.userdata = userdata;
 
@@ -78,6 +79,14 @@ int glwtInit(const GLWTConfig *config,
 
     glwt.osx.app = [NSApplication sharedApplication];
     glwt.osx.autorelease_pool = [[NSAutoreleasePool alloc] init];
+
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *mainNibName = [infoDictionary objectForKey:@"NSMainNibFile"];
+    nibLoaded = [NSBundle loadNibNamed:mainNibName owner:NSApp];
+    if(!nibLoaded)
+    {
+        // well, you just don't have a nib
+    }
 
     /*
      If ran outside of application bundle, system assumes a
