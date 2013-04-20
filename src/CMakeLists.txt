@@ -1,5 +1,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-set(GLWT_SOURCES common/glwt.c)
+set(GLWT_SOURCES
+    common/glwt.c
+    )
 
 if(WIN32)
     list(APPEND GLWT_SOURCES
@@ -99,3 +101,6 @@ endif()
 
 add_library(glwt ${GLWT_SOURCES})
 target_link_libraries(glwt ${GLWT_DEPENDENCY_LIBRARIES})
+
+add_library(glwt_intrusive STATIC common/glwt_intrusive.c)
+target_link_libraries(glwt_intrusive glwt)
