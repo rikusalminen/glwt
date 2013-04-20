@@ -9,6 +9,8 @@
 #include <GLXW/glxw.h>
 #endif
 
+#define MAX_WINDOWS 16
+
 static int encode_utf8(unsigned int codepoint, unsigned char *out)
 {
     if((codepoint & ~0x7F) == 0)
@@ -38,6 +40,11 @@ static int encode_utf8(unsigned int codepoint, unsigned char *out)
     return 0;
 }
 
+static GLWTWindow *windows[MAX_WINDOWS] = {0};
+static int windowsOpen = 0;
+
+static int newWindow();
+
 static void error_callback(const char *msg, void *userdata)
 {
     (void)userdata;
@@ -52,10 +59,10 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
     switch(event->type)
     {
         case GLWT_WINDOW_CLOSE:
-            printf("[%lf] Window closed\n", time);
+            printf("[%lf] Window %p closed\n", time, window);
             break;
         case GLWT_WINDOW_EXPOSE:
-            printf("[%lf] Window exposed\n", time);
+            printf("[%lf] Window %p exposed\n", time, window);
             {
                 glwtMakeCurrent(window);
                 glwtSwapInterval(window, 1);
@@ -65,45 +72,57 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
                 glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glwtSwapBuffers(window);
-
                 glwtMakeCurrent(NULL);
             }
             break;
         case GLWT_WINDOW_RESIZE:
-            printf("[%lf] Window resized  width: %d  height: %d\n", time, event->resize.width, event->resize.height);
+            printf("[%lf] Window %p resized  width: %d  height: %d\n", time,
+                    window, event->resize.width, event->resize.height);
             break;
         case GLWT_WINDOW_SHOW:
         case GLWT_WINDOW_HIDE:
-            printf("[%lf] Window %s\n", time, (event->type == GLWT_WINDOW_SHOW) ? "show" : "hide");
+            printf("[%lf] Window %p %s\n", time, window,
+                    (event->type == GLWT_WINDOW_SHOW) ? "show" : "hide");
             break;
         case GLWT_WINDOW_FOCUS_IN:
         case GLWT_WINDOW_FOCUS_OUT:
-            printf("[%lf] Window focus %s\n", time, (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
+            printf("[%lf] Window %p focus %s\n", time, window,
+                    (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
             break;
         case GLWT_WINDOW_KEY_UP:
         case GLWT_WINDOW_KEY_DOWN:
-            printf("[%lf] Key %s  keysym: 0x%x  scancode: %d  mod: %X\n", time,
-                (event->type == GLWT_WINDOW_KEY_DOWN) ? "down" : "up",
-                event->key.keysym, event->key.scancode, event->key.mod);
+            printf("[%lf] Window %p key %s  keysym: 0x%x  scancode: %d  mod: %X\n",
+                    time, window,
+                    (event->type == GLWT_WINDOW_KEY_DOWN) ? "down" : "up",
+                    event->key.keysym, event->key.scancode, event->key.mod);
+
+            if(event->type == GLWT_WINDOW_KEY_DOWN
+                && event->key.keysym == GLWT_KEY_RETURN)
+            {
+                newWindow();
+            }
             break;
         case GLWT_WINDOW_BUTTON_UP:
         case GLWT_WINDOW_BUTTON_DOWN:
-            printf("[%lf] Button %s  x: %d  y: %d  button: %d  mod: %X\n", time,
-                (event->type == GLWT_WINDOW_BUTTON_DOWN) ? "down" : "up",
-                event->button.x, event->button.y, event->button.button, event->button.mod);
+            printf("[%lf] Window %p button %s  x: %d  y: %d  button: %d  mod: %X\n",
+                    time, window,
+                    (event->type == GLWT_WINDOW_BUTTON_DOWN) ? "down" : "up",
+                    event->button.x, event->button.y, event->button.button,
+                    event->button.mod);
             break;
         case GLWT_WINDOW_MOUSE_MOTION:
-            printf("[%lf] Motion  x: %d  y: %d  buttons: %X\n", time,
-                event->motion.x, event->motion.y, event->motion.buttons);
+            printf("[%lf] Window %p motion  x: %d  y: %d  buttons: %X\n", time,
+                    window, event->motion.x, event->motion.y, event->motion.buttons);
             break;
         case GLWT_WINDOW_MOUSE_ENTER:
         case GLWT_WINDOW_MOUSE_LEAVE:
-            printf("[%lf] Mouse %s\n", time, (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
+            printf("[%lf] Window %p mouse %s\n", time, window,
+                    (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
             break;
         case GLWT_WINDOW_CHARACTER_INPUT:
-            printf("Character input 0x%x (%c)\n",
-                event->character.unicode,
-                (event->character.unicode < 128 && isprint(event->character.unicode)) ?
+            printf("[%lf] Window %p character input 0x%x (%c)\n", time, window,
+                    event->character.unicode,
+                    (event->character.unicode < 128 && isprint(event->character.unicode)) ?
                     event->character.unicode : ' ');
             if(event->character.unicode >= 128 || isprint(event->character.unicode))
             {
@@ -115,17 +134,52 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
 
                 glwtWindowSetTitle(window, buf);
             }
-
             break;
         default:
             break;
     }
 }
 
+static int newWindow()
+{
+    int width, height;
+    int id = 0;
+    for (int i = 0; i < MAX_WINDOWS; ++i)
+    {
+        if(!windows[i])
+        {
+            windows[i] = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL);
+            if(!windows[i])
+            {
+                printf("Could not open a window!\n");
+                return 0;
+            }
+            id = i;
+            break;
+        }
+    }
+
+    ++windowsOpen;
+
+    glwtWindowSetTitle(windows[id], "GLWT Events test");
+
+    glwtWindowShow(windows[id], 1);
+    glwtMakeCurrent(windows[id]);
+    glwtSwapInterval(windows[id], 1);
+
+    glxwInit();
+
+    printf("%s\n", (const char*)glGetString(GL_VERSION));
+
+    glwtWindowGetSize(windows[id], &width, &height);
+    printf("Window %p size: %d x %d\n", windows[id], width, height);
+
+    return 1;
+}
+
 int main(int argc, char *argv[])
 {
     int err = -1;
-    GLWTWindow *window = 0;
     GLWTConfig glwt_config = {
         0, 0, 0, 0,
         0, 0,
@@ -144,21 +198,32 @@ int main(int argc, char *argv[])
     if(glwtInit(&glwt_config, error_callback, NULL) != 0)
         goto error;
 
-    if(!(window = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL)))
+    if(!newWindow())
         goto error;
 
-    glwtWindowSetTitle(window, "GLWT Events test");
-    glwtWindowShow(window, 1);
-
-    while(!glwtWindowClosed(window))
+    while(windowsOpen)
     {
         if(glwtEventHandle(1) != 0)
             goto error;
+
+        for (int i = 0; i < MAX_WINDOWS; ++i)
+        {
+            if(windows[i] && glwtWindowClosed(windows[i]))
+            {
+                glwtWindowDestroy(windows[i]);
+                --windowsOpen;
+                windows[i] = 0;
+            }
+        }
     }
 
     err = 0;
 error:
-    glwtWindowDestroy(window);
+    for (int i = 0; i < MAX_WINDOWS; ++i)
+    {
+        if(windows[i])
+            glwtWindowDestroy(windows[i]);
+    }
     glwtQuit();
     return err;
 }
