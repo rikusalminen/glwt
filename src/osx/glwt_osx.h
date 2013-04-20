@@ -7,6 +7,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 typedef void* id;
 #endif
+#include <stdint.h>
 
 struct glwt_osx
 {

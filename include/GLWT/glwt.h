@@ -1,6 +1,8 @@
 #ifndef GLWT_glwt_h
 #define GLWT_glwt_h
 
+#include <stdint.h>
+
 #include <GLWT/glwt_keysym.h>
 
 #ifdef __cplusplus
@@ -88,6 +90,7 @@ int glwtSwapInterval(GLWTWindow *win, int interval);
 int glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
 
 int glwtEventHandle(int wait);
+uint64_t glwtGetTime();
 
 #ifdef __cplusplus
 }

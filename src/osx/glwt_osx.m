@@ -1,3 +1,5 @@
+#import <mach/mach_time.h>
+
 #import <GLWT/glwt.h>
 #import <glwt_internal.h>
 
@@ -145,4 +147,14 @@ int glwtEventHandle(int wait)
     glwt.osx.autorelease_pool = [NSAutoreleasePool new];
 
     return 0;
+}
+
+uint64_t glwtGetTime()
+{
+    mach_timebase_info_data_t time_info;
+
+    // query mach_absolute_time frequency
+    mach_timebase_info(&time_info);
+
+    return (mach_absolute_time() * time_info.numer) / time_info.denom;
 }
