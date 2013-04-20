@@ -672,7 +672,8 @@ GLWTWindow *glwtWindowCreate(
 
     ((GLWTNSWindow *)win->osx.nswindow).glwt_window = win;
     [win->osx.nswindow center];
-    [win->osx.nswindow setDelegate:[[GLWTNSWindowDelegate alloc] initWithGLWTWindow:win]];
+    win->osx.delegate = [[GLWTNSWindowDelegate alloc] initWithGLWTWindow:win];
+    [win->osx.nswindow setDelegate:[win->osx.delegate retain]];
     [win->osx.nswindow setAcceptsMouseMovedEvents:YES];
     [win->osx.nswindow setTitle:[NSString stringWithUTF8String:title]];
     [win->osx.nswindow setReleasedWhenClosed:NO];
@@ -683,6 +684,7 @@ GLWTWindow *glwtWindowCreate(
         glwtErrorPrintf("NSView initWithFrame failed");
         goto error;
     }
+    win->osx.view = [view retain];
     [win->osx.nswindow setContentView:view];
 
     win->osx.ctx = [[NSOpenGLContext alloc]
@@ -716,9 +718,10 @@ void glwtWindowDestroy(GLWTWindow *win)
        [win->osx.ctx release];
     if(win->osx.nswindow)
     {
-        [[win->osx.nswindow contentView] release];
-        [[win->osx.nswindow delegate] release];
         [win->osx.nswindow setDelegate:nil];
+        [win->osx.delegate release];
+        [win->osx.nswindow setContentView:nil];
+        [win->osx.view release];
         [win->osx.nswindow close];
     }
     free(win);
