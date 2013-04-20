@@ -1,5 +1,8 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-set(GLWT_SOURCES common/glwt.c)
+set(GLWT_SOURCES
+    common/glwt.c
+    common/glwt_app.c
+    )
 
 if(WIN32)
     list(APPEND GLWT_SOURCES

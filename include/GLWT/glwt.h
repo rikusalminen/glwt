@@ -45,6 +45,8 @@ typedef enum GLWTWindowEventType {
     GLWT_WINDOW_MOUSE_MOTION,
     GLWT_WINDOW_MOUSE_ENTER,
     GLWT_WINDOW_MOUSE_LEAVE,
+    GLWT_WINDOW_SURFACE_CREATE,
+    GLWT_WINDOW_SURFACE_DESTROY,
 } GLWTWindowEventType;
 
 typedef struct GLWTWindowEvent
@@ -88,6 +90,10 @@ int glwtSwapInterval(GLWTWindow *win, int interval);
 int glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
 
 int glwtEventHandle(int wait);
+
+extern GLWTWindow *glwtAppInit(int argc, char *argv[]); // user defined
+int glwtAppMain(int argc, char *argv[]);
+void glwtAppTerminate();
 
 #ifdef __cplusplus
 }
