@@ -237,6 +237,37 @@ static void onContentRectChanged(ANativeActivity *activity, const ARect* rect)
     (void)activity;
     (void)rect;
     LOGI("ANativeActivity onContentRectChanged %d, %d  - %d, %d\n", rect->left, rect->top, rect->right, rect->bottom);
+
+    int egl_width = 0, egl_height = 0;
+    eglQuerySurface(glwt.egl.display, glwt.android.window->egl.surface, EGL_WIDTH, &egl_width);
+    eglQuerySurface(glwt.egl.display, glwt.android.window->egl.surface, EGL_WIDTH, &egl_height);
+
+    int native_width = ANativeWindow_getWidth(glwt.android.window->android.native_window);
+    int native_height = ANativeWindow_getWidth(glwt.android.window->android.native_window);
+
+    if(egl_width != native_width || egl_height != native_height)
+    {
+        if(glwt.android.window->win_callback)
+        {
+            GLWTWindowEvent event;
+            event.window = glwt.android.window;
+            event.type = GLWT_WINDOW_SURFACE_DESTROY;
+
+            glwt.android.window->win_callback(glwt.android.window, &event, glwt.android.window->userdata);
+        }
+
+        glwtWindowDestroySurfaceEGL(glwt.android.window);
+        glwtWindowCreateSurfaceEGL(glwt.android.window, glwt.android.window->android.native_window);
+
+        if(glwt.android.window->win_callback)
+        {
+            GLWTWindowEvent event;
+            event.window = glwt.android.window;
+            event.type = GLWT_WINDOW_SURFACE_CREATE;
+
+            glwt.android.window->win_callback(glwt.android.window, &event, glwt.android.window->userdata);
+        }
+    }
 }
 
 static void onConfigurationChanged(ANativeActivity *activity)
