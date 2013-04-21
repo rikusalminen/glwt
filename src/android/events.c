@@ -4,6 +4,17 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, __FILE__, __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, __FILE__, __VA_ARGS__))
 
+// NOTE: these values are missing from Android NDK headers. Values from:
+// http://developer.android.com/reference/android/view/MotionEvent.html
+#define AMOTION_EVENT_ACTION_HOVER_MOVE     7
+#define AMOTION_EVENT_ACTION_HOVER_ENTER    9
+#define AMOTION_EVENT_ACTION_HOVER_EXIT     10
+
+// http://developer.android.com/reference/android/view/InputDevice.html
+#define AINPUT_SOURCE_STYLUS                0x00004002
+#define AINPUT_SOURCE_GAMEPAD               0x00000401
+#define AINPUT_SOURCE_JOYSTICK              0x01000010
+
 int glwtEventHandle(int wait)
 {
     (void)wait;
@@ -19,15 +30,24 @@ static void handle_event_key(AInputEvent *event)
 
 static void handle_event_motion(AInputEvent *event)
 {
+    int32_t action_value = AMotionEvent_getAction(event);
+    int32_t action = action_value & AMOTION_EVENT_ACTION_MASK;
+    int32_t pointer_index = (action_value & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> 8;
     int32_t source = AInputEvent_getSource(event);
 
     size_t pointer_count = AMotionEvent_getPointerCount(event);
 
-    size_t pointer_index = 0;
     float x = AMotionEvent_getX(event, pointer_index);
     float y = AMotionEvent_getY(event, pointer_index);
 
-    LOGI("***** handle event motion %x  %u:  %f %f*****\n", source, pointer_count, x, y);
+    LOGI("***** handle event motion %x %x %x  %u:  %f %f *****\n", source, action, pointer_index, pointer_count, x, y);
+
+    if(source == AINPUT_SOURCE_MOUSE)
+    {
+        if(action == AMOTION_EVENT_ACTION_DOWN)
+        {
+        }
+    }
 
     /*
     AINPUT_SOURCE_KEYBOARD
