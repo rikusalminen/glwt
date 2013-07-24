@@ -495,6 +495,21 @@ static unsigned int convertModifiers(unsigned int mods)
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
+- (void)drawRect:(NSRect)dirtyRect
+{
+    (void)dirtyRect;
+
+    if(!glwt_window->win_callback)
+        return;
+
+    GLWTWindowEvent e;
+    e.window = glwt_window;
+    e.type = GLWT_WINDOW_EXPOSE;
+    e.dummy.dummy = 0;
+
+    glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
+}
+
 @end
 
 //=================================================================
@@ -618,21 +633,6 @@ static unsigned int convertModifiers(unsigned int mods)
 {
     (void)notification;
     // TODO: handle event?
-}
-
-- (void)windowDidExpose:(NSNotification *)notification
-{
-    (void)notification;
-
-    if(!glwt_window->win_callback)
-        return;
-
-    GLWTWindowEvent e;
-    e.window = glwt_window;
-    e.type = GLWT_WINDOW_EXPOSE;
-    e.dummy.dummy = 0;
-
-    glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
 }
 
 @end

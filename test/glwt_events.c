@@ -27,9 +27,16 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
         case GLWT_WINDOW_EXPOSE:
             printf("Window exposed\n");
             {
+                glwtMakeCurrent(window);
+                glwtSwapInterval(window, 1);
+
+                glxwInit();
+
                 glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glwtSwapBuffers(window);
+
+                glwtMakeCurrent(NULL);
             }
             break;
         case GLWT_WINDOW_RESIZE:
@@ -85,8 +92,6 @@ int main(int argc, char *argv[])
 #endif
     };
 
-    int width, height;
-
     (void)argc; (void)argv;
 
     if(glwtInit(&glwt_config, error_callback, NULL) != 0)
@@ -96,25 +101,13 @@ int main(int argc, char *argv[])
         goto error;
 
     glwtWindowSetTitle(window, "GLWT Events test");
-
     glwtWindowShow(window, 1);
-    glwtMakeCurrent(window);
-    glwtSwapInterval(window, 1);
-
-    glxwInit();
-
-    printf("%s\n", (const char*)glGetString(GL_VERSION));
-
-    glwtWindowGetSize(window, &width, &height);
-    printf("Window size: %d x %d\n", width, height);
 
     while(!glwtWindowClosed(window))
     {
         if(glwtEventHandle(1) != 0)
             goto error;
     }
-
-    glwtMakeCurrent(0);
 
     err = 0;
 error:
