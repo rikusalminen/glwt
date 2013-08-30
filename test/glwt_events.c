@@ -47,14 +47,15 @@ static void error_callback(const char *msg, void *userdata)
 static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata)
 {
     (void)userdata;
+    double time = glwtGetTime();
 
     switch(event->type)
     {
         case GLWT_WINDOW_CLOSE:
-            printf("Window closed\n");
+            printf("[%lf] Window closed\n", time);
             break;
         case GLWT_WINDOW_EXPOSE:
-            printf("Window exposed\n");
+            printf("[%lf] Window exposed\n", time);
             {
                 glwtMakeCurrent(window);
                 glwtSwapInterval(window, 1);
@@ -69,35 +70,35 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
             }
             break;
         case GLWT_WINDOW_RESIZE:
-            printf("Window resized  width: %d  height: %d\n", event->resize.width, event->resize.height);
+            printf("[%lf] Window resized  width: %d  height: %d\n", time, event->resize.width, event->resize.height);
             break;
         case GLWT_WINDOW_SHOW:
         case GLWT_WINDOW_HIDE:
-            printf("Window %s\n", (event->type == GLWT_WINDOW_SHOW) ? "show" : "hide");
+            printf("[%lf] Window %s\n", time, (event->type == GLWT_WINDOW_SHOW) ? "show" : "hide");
             break;
         case GLWT_WINDOW_FOCUS_IN:
         case GLWT_WINDOW_FOCUS_OUT:
-            printf("Window focus %s\n", (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
+            printf("[%lf] Window focus %s\n", time, (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
             break;
         case GLWT_WINDOW_KEY_UP:
         case GLWT_WINDOW_KEY_DOWN:
-            printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n",
+            printf("[%lf] Key %s  keysym: 0x%x  scancode: %d  mod: %X\n", time,
                 (event->type == GLWT_WINDOW_KEY_DOWN) ? "down" : "up",
                 event->key.keysym, event->key.scancode, event->key.mod);
             break;
         case GLWT_WINDOW_BUTTON_UP:
         case GLWT_WINDOW_BUTTON_DOWN:
-            printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n",
+            printf("[%lf] Button %s  x: %d  y: %d  button: %d  mod: %X\n", time,
                 (event->type == GLWT_WINDOW_BUTTON_DOWN) ? "down" : "up",
                 event->button.x, event->button.y, event->button.button, event->button.mod);
             break;
         case GLWT_WINDOW_MOUSE_MOTION:
-            printf("Motion  x: %d  y: %d  buttons: %X\n",
+            printf("[%lf] Motion  x: %d  y: %d  buttons: %X\n", time,
                 event->motion.x, event->motion.y, event->motion.buttons);
             break;
         case GLWT_WINDOW_MOUSE_ENTER:
         case GLWT_WINDOW_MOUSE_LEAVE:
-            printf("Mouse %s\n", (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
+            printf("[%lf] Mouse %s\n", time, (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
             break;
         case GLWT_WINDOW_CHARACTER_INPUT:
             printf("Character input 0x%x (%c)\n",
