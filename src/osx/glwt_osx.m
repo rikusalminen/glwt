@@ -1,6 +1,8 @@
 #import <GLWT/glwt.h>
 #import <glwt_internal.h>
 
+#import <mach/mach_time.h>
+
 static int createPixelFormat(const GLWTConfig *config)
 {
     if(config &&
@@ -156,4 +158,14 @@ int glwtEventHandle(int wait)
     glwt.osx.autorelease_pool = [NSAutoreleasePool new];
 
     return 0;
+}
+
+double glwtGetTime()
+{
+    mach_timebase_info_data_t time_info;
+
+    // query mach_absolute_time frequency
+    mach_timebase_info(&time_info);
+
+    return (double)mach_absolute_time() * ((double)time_info.numer / (double)time_info.denom) * 1e-9;
 }

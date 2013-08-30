@@ -36,6 +36,7 @@ elseif (RASPBERRYPI)
         rpi/glwt_rpi.c
         rpi/window.c
         rpi/events.c
+        posix/glwt_posix.c
         )
 
     list(APPEND GLWT_DEPENDENCY_LIBRARIES ${BROADCOM_LIBRARY})
@@ -62,6 +63,7 @@ else()
         x11/glwt_x11.c
         x11/window.c
         x11/events.c
+        posix/glwt_posix.c
         )
 
     if(NOT GLWT_USE_EGL)

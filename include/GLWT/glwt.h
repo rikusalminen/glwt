@@ -90,6 +90,7 @@ int glwtSwapInterval(GLWTWindow *win, int interval);
 int glwtWindowGetSize(GLWTWindow *win, int *width, int *height);
 
 int glwtEventHandle(int wait);
+double glwtGetTime();
 
 #ifdef __cplusplus
 }
