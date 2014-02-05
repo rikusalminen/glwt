@@ -93,10 +93,9 @@ int glwtInit(const GLWTConfig *config,
      command-line application or similiar. Tell system that we
      are actually a gui application that likes to have a dock icon etc.
      */
-    ProcessSerialNumber psn;
-    GetCurrentProcess(&psn);
+    ProcessSerialNumber psn = { 0, kCurrentProcess };
     TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-    SetFrontProcess(&psn);
+    [[NSApplication sharedApplication] activateIgnoringOtherApps: YES];
 
     [NSEvent setMouseCoalescingEnabled:NO];
     [glwt.osx.app finishLaunching];
