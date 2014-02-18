@@ -144,13 +144,18 @@ static int translate_key(int xkeysym)
     return GLWT_KEY_UNKNOWN;
 }
 
+static Bool xlib_event_predicate(Display *display, XEvent *event, XPointer arg)
+{
+    (void)display; (void)event; (void)arg;
+    return True;
+}
+
 static int xlib_handle_event()
 {
     XEvent event;
     int num_handled_events = 0;
 
-    while(XCheckMaskEvent(glwt.x11.display, ~0, &event) ||
-        XCheckTypedEvent(glwt.x11.display, ClientMessage, &event))
+    while(XCheckIfEvent(glwt.x11.display, &event, xlib_event_predicate, NULL))
     {
         ++num_handled_events;
 
