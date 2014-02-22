@@ -42,6 +42,11 @@ GLWTWindow *glwtWindowCreate(
         glwt.x11.visual,
         attrib_mask,
         &attrib);
+    if(!win->x11.window)
+    {
+        glwtErrorPrintf("XCreateWindow failed");
+        goto error;
+    }
 
     Atom protocols[] = {
         glwt.x11.atoms.WM_DELETE_WINDOW,
