@@ -243,6 +243,16 @@ static unsigned int convertModifiers(unsigned int mods)
     e.key.mod = convertModifiers([event modifierFlags]);
 
     glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
+
+    for(unsigned int idx = 0; idx < [[event characters] length]; ++idx)
+    {
+        GLWTWindowEvent e;
+
+        e.type = GLWT_WINDOW_CHARACTER_INPUT;
+        e.window = glwt_window;
+        e.character.unicode = [[event characters] characterAtIndex:idx];
+        glwt_window->win_callback(glwt_window, &e, glwt_window->userdata);
+    }
 }
 
 - (void)keyUp:(NSEvent *)event
