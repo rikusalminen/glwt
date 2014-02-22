@@ -144,6 +144,32 @@ static int translate_key(int xkeysym)
     return GLWT_KEY_UNKNOWN;
 }
 
+static unsigned int decode_utf8(const unsigned char* data, int len)
+{
+    if(len == 0)
+        return 0;
+    else if(len == 1 &&
+        (data[0] & 0x80) == 0)
+        return data[0];
+    else if(len == 2 &&
+        (data[0] & 0xe0) == 0xc0 &&
+        (data[1] & 0xc0) == 0x80)
+        return ((data[0] & 0x1f) << 6) | (data[1] & 0x3f);
+    else if(len == 3 &&
+        (data[0] & 0xf0) == 0xe0 &&
+        (data[1] & 0xc0) == 0x80 &&
+        (data[2] & 0xc0) == 0x80)
+        return ((data[0] & 0x0f) << 12) | ((data[1] & 0x3f) << 6) | (data[2] & 0x3f);
+    else if(len == 4 &&
+        (data[0] & 0xf7) == 0xf0 &&
+        (data[1] & 0x3f) == 0x80 &&
+        (data[2] & 0x3f) == 0x80 &&
+        (data[3] & 0x3f) == 0x80)
+        return ((data[0] & 0x7) << 18) | ((data[1] & 0x3f) << 12) | ((data[2] & 0x3f) << 6) | (data[3] & 0x3f);
+
+    return 0;
+}
+
 static Bool xlib_event_predicate(Display *display, XEvent *event, XPointer arg)
 {
     (void)display; (void)event; (void)arg;
@@ -213,6 +239,40 @@ static int xlib_handle_event()
                     e.key.mod = mapKeyMod(event.xkey.state);
                     win->win_callback(win, &e, win->userdata);
                 }
+
+                if(event.type == KeyPress && !XFilterEvent(&event, None))
+                {
+                    char buffer[5] = { 0, 0, 0, 0, 0 };
+                    int buffer_size = sizeof(buffer);
+                    int len = 0;
+                    Status status = XLookupNone;
+
+                    len = Xutf8LookupString(
+                        win->x11.xic,
+                        (XKeyEvent*)&event.xkey,
+                        buffer, buffer_size-1,
+                        NULL,
+                        &status);
+                    buffer[len] = 0;
+
+                    if(status == XBufferOverflow)
+                    {
+                        glwtErrorPrintf("Xutf8LookupString buffer overflow");
+                        return -1;
+                    }
+
+                    if(win->win_callback &&
+                        (status == XLookupBoth || status == XLookupChars))
+                    {
+                        GLWTWindowEvent e;
+                        e.window = win;
+                        e.type = GLWT_WINDOW_CHARACTER_INPUT;
+                        e.character.unicode = decode_utf8((unsigned char*)buffer, len);
+
+                        win->win_callback(win, &e, win->userdata);
+                    }
+                }
+
                 break;
             case FocusIn:
             case FocusOut:

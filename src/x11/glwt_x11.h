@@ -22,6 +22,8 @@ struct glwt_x11
     int depth;
     Colormap colormap;
 
+    XIM xim;
+
     struct
     {
 #define GLWT_X11_ATOM_DECLARE(X) Atom X;
@@ -33,6 +35,8 @@ struct glwt_x11
 struct glwt_window_x11
 {
     Window window;
+
+    XIC xic;
 };
 
 #endif

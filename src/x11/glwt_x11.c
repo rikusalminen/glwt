@@ -77,6 +77,12 @@ int glwtInit(
         goto error;
     }
 
+    if((glwt.x11.xim = XOpenIM(glwt.x11.display, NULL, NULL, NULL)) == NULL)
+    {
+        glwtErrorPrintf("XOpenIM failed");
+        goto error;
+    }
+
     if(init_x11_atoms() != 0)
         goto error;
 
@@ -136,6 +142,8 @@ void glwtQuit()
     {
         if(glwt.x11.colormap)
             XFreeColormap(glwt.x11.display, glwt.x11.colormap);
+        if(glwt.x11.xim)
+            XCloseIM(glwt.x11.xim);
         XCloseDisplay(glwt.x11.display);
     }
 

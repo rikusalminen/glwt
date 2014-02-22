@@ -59,6 +59,18 @@ GLWTWindow *glwtWindowCreate(
         goto error;
     }
 
+    win->x11.xic = XCreateIC(
+        glwt.x11.xim,
+        XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+        XNClientWindow, win->x11.window,
+        XNFocusWindow, win->x11.window,
+        NULL);
+    if(!win->x11.xic)
+    {
+        glwtErrorPrintf("XCreateIC failed");
+        goto error;
+    }
+
 #ifdef GLWT_USE_EGL
     if(glwtWindowCreateEGL(win, share, win->x11.window) != 0)
 #else
@@ -93,6 +105,9 @@ void glwtWindowDestroy(GLWTWindow *win)
 #else
     glwtWindowDestroyGLX(win);
 #endif
+
+    if(win->x11.xic)
+        XDestroyIC(win->x11.xic);
 
     if(win->x11.window)
         XDestroyWindow(glwt.x11.display, win->x11.window);
