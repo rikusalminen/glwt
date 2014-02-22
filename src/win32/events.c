@@ -162,6 +162,17 @@ static int translate_key(WPARAM wParam, LPARAM lParam)
     return GLWT_KEY_UNKNOWN;
 }
 
+static unsigned int utf16_decode(unsigned int utf16)
+{
+    unsigned short lo = utf16 & 0xFFFF;
+    unsigned short hi = (utf16 & 0xFFFF0000) >> 16;
+
+    if(lo < 0xD8000 || lo > 0xDFFF) return lo;
+    else if(lo < 0xD800 || lo > 0xDBFF) return 0;
+    else if(hi < 0xDC00 || hi > 0xDFFF) return 0;
+    else return ((lo & 0x3FF) << 10) | (hi & 0x3FF) + 0x10000;
+}
+
 LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     GLWTWindow *win = (GLWTWindow*)GetWindowLongPtr(hwnd, 0);
@@ -365,7 +376,15 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 return 1;
 
             case WM_CHAR:
-                // TODO: Handle text input
+                if(win->win_callback)
+                {
+                    GLWTWindowEvent event;
+                    event.window = win;
+                    event.type = GLWT_WINDOW_CHARACTER_INPUT;
+                    event.character.unicode = utf16_decode(wParam);
+
+                    win->win_callback(win, &event, win->userdata);
+                }
 
             case WM_DESTROY:
             case WM_QUIT:
