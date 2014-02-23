@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 
 #include <GLWT/glwt.h>
 
@@ -8,6 +9,35 @@
 #include <GLXW/glxw.h>
 #endif
 
+static int encode_utf8(unsigned int codepoint, unsigned char *out)
+{
+    if((codepoint & ~0x7F) == 0)
+    {
+        out[0] = (codepoint & 0x7F);
+        return 1;
+    } else if((codepoint & ~0x7FF) == 0)
+    {
+        out[0] = (0xc0 | (codepoint & 0x7C0) >> 6);
+        out[1] = (0x80 | (codepoint & 0x3F));
+        return 2;
+    } else if((codepoint & ~0xFFFF) == 0)
+    {
+        out[0] = (0xe0 | (codepoint & 0xF000) >> 12);
+        out[1] = (0x80 | (codepoint & 0xFC) >> 6);
+        out[2] = (0x80 | (codepoint & 0x3F));
+        return 3;
+    } else if((codepoint & ~0x3FFFF) == 0)
+    {
+        out[0] = (0xf0 | (codepoint & 0x1c0000) >> 18);
+        out[1] = (0x80 | (codepoint & 0x3f00) >> 12);
+        out[2] = (0x80 | (codepoint & 0xFC) >> 6);
+        out[3] = (0x80 | (codepoint & 0x3F));
+        return 4;
+    }
+
+    return 0;
+}
+
 static void error_callback(const char *msg, void *userdata)
 {
     (void)userdata;
@@ -16,7 +46,6 @@ static void error_callback(const char *msg, void *userdata)
 
 static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata)
 {
-    (void)window;
     (void)userdata;
 
     switch(event->type)
@@ -69,6 +98,23 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
         case GLWT_WINDOW_MOUSE_ENTER:
         case GLWT_WINDOW_MOUSE_LEAVE:
             printf("Mouse %s\n", (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
+            break;
+        case GLWT_WINDOW_CHARACTER_INPUT:
+            printf("Character input 0x%x (%c)\n",
+                event->character.unicode,
+                (event->character.unicode < 128 && isprint(event->character.unicode)) ?
+                    event->character.unicode : ' ');
+            if(event->character.unicode >= 128 || isprint(event->character.unicode))
+            {
+                int bytes = 0;
+                char buf[5];
+
+                bytes = encode_utf8(event->character.unicode, (unsigned char*)buf);
+                buf[bytes] = 0;
+
+                glwtWindowSetTitle(window, buf);
+            }
+
             break;
         default:
             break;
