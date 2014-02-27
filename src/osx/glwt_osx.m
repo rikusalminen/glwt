@@ -82,7 +82,18 @@ int glwtInit(const GLWTConfig *config,
 
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString *mainNibName = [infoDictionary objectForKey:@"NSMainNibFile"];
-    nibLoaded = [NSBundle loadNibNamed:mainNibName owner:NSApp];
+    
+    if([[NSBundle mainBundle] respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)])
+    {
+        // 10.8 and up
+        nibLoaded = [[NSBundle mainBundle] loadNibNamed:mainNibName owner:NSApp topLevelObjects:&glwt.osx.nib_toplevel];
+    } else
+    {
+        // 10.7 and under (performSelector to avoid deprecation warnings)
+        nibLoaded = (BOOL)[NSBundle performSelector:@selector(loadNibNamed:owner:) withObject:mainNibName withObject:NSApp];
+    }
+    
+    [glwt.osx.nib_toplevel retain];
     if(!nibLoaded)
     {
         // well, you just don't have a nib
@@ -105,6 +116,7 @@ int glwtInit(const GLWTConfig *config,
 
 void glwtQuit()
 {
+    [glwt.osx.nib_toplevel release];
     if (glwt.osx.app)
     {
         [glwt.osx.app stop:nil];

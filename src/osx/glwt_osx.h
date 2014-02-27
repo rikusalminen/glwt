@@ -12,6 +12,7 @@ struct glwt_osx
 {
     CGDisplayModeRef desktop_mode;
     id app;
+    id nib_toplevel;
     id autorelease_pool;
     id pixel_format;
 };
