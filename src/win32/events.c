@@ -381,10 +381,12 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     GLWTWindowEvent event;
                     event.window = win;
                     event.type = GLWT_WINDOW_CHARACTER_INPUT;
-                    event.character.unicode = utf16_decode(wParam);
+                    event.character.unicode = utf16_decode((unsigned int)wParam);
 
                     win->win_callback(win, &event, win->userdata);
                 }
+
+                return 0;
 
             case WM_DESTROY:
             case WM_QUIT:
