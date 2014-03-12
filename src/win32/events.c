@@ -192,7 +192,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 }
 
                 ValidateRect(hwnd, NULL);
-                return 1;
+                return 0;
 
             case WM_KEYUP:
             case WM_KEYDOWN:
@@ -251,7 +251,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                return 0;
 
             case WM_MOUSEMOVE:
                 if(win->win_callback)
@@ -284,57 +284,35 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                return 0;
 
             case WM_SETFOCUS:
-                if(win->win_callback)
-                {
-                    GLWTWindowEvent event;
-                    event.window = win;
-                    event.type = GLWT_WINDOW_FOCUS_IN;
-                    event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
-                }
-
-                return 1;
-
             case WM_KILLFOCUS:
                 if(win->win_callback)
                 {
                     GLWTWindowEvent event;
                     event.window = win;
-                    event.type = GLWT_WINDOW_FOCUS_OUT;
+                    event.type = uMsg == WM_SETFOCUS ? GLWT_WINDOW_FOCUS_IN : GLWT_WINDOW_FOCUS_OUT;
                     event.dummy.dummy = 0;
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                return 0;
 
             case WM_MOUSEHOVER:
-                if(win->win_callback)
-                {
-                    GLWTWindowEvent event;
-                    event.window = win;
-                    event.type = (win->win32.hover == 1 ? GLWT_WINDOW_NO_EVENT : GLWT_WINDOW_MOUSE_ENTER);
-                    event.dummy.dummy = 0;
-                    win->win32.hover = 1;
-                    win->win_callback(win, &event, win->userdata);
-                }
-
-                return 1;
-
             case WM_MOUSELEAVE:
                 if(win->win_callback)
                 {
                     GLWTWindowEvent event;
                     event.window = win;
-                    event.type = GLWT_WINDOW_MOUSE_LEAVE;
+                    event.type = (uMsg == WM_MOUSEHOVER ? GLWT_WINDOW_MOUSE_ENTER : GLWT_WINDOW_MOUSE_LEAVE);
                     event.dummy.dummy = 0;
-                    win->win32.hover = 0;
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                win->win32.hover = (uMsg == WM_MOUSEHOVER ? 1 : 0);
+
+                return 0;
 
             case WM_SHOWWINDOW:
                 if(win->win_callback)
@@ -346,7 +324,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                return 0;
 
             case WM_SIZE:
                 if(win->win_callback)
@@ -373,7 +351,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                return 1;
+                return 0;
 
             case WM_CHAR:
                 if(win->win_callback)
@@ -387,10 +365,6 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 }
 
                 return 0;
-
-            case WM_DESTROY:
-            case WM_QUIT:
-                // TODO: Handle destroy and quit messages
 
             default:
                 break;
