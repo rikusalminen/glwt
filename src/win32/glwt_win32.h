@@ -16,7 +16,6 @@ struct glwt_window_win32
 {
     HWND hwnd;
     HDC hdc;
-    int hover;
 };
 
 void glwtWin32Error(const char *msg);

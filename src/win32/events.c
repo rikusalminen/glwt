@@ -258,19 +258,6 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 {
                     GLWTWindowEvent event;
 
-                    /* Keep mouse enter/leave events alive */
-                    if( win->win32.hover == 0 )
-                    {
-                        TRACKMOUSEEVENT tme;
-                        tme.cbSize = sizeof(tme);
-                        tme.dwFlags = TME_HOVER|TME_LEAVE;
-                        tme.hwndTrack = hwnd;
-                        tme.dwHoverTime = 1;
-                        TrackMouseEvent(&tme);
-
-                        win->win32.hover = -1;
-                    }
-
                     event.window = win;
                     event.type = GLWT_WINDOW_MOUSE_MOTION;
                     event.motion.x = GET_X_LPARAM(lParam);
@@ -282,6 +269,23 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                         (wParam & MK_XBUTTON1 ? (1 << 5) : 0) |
                         (wParam & MK_XBUTTON2 ? (1 << 6) : 0);
                     win->win_callback(win, &event, win->userdata);
+                }
+
+                {
+                    TRACKMOUSEEVENT tme;
+                    tme.cbSize = sizeof(tme);
+                    tme.dwFlags = TME_QUERY;
+                    tme.hwndTrack = hwnd;
+                    TrackMouseEvent(&tme);
+
+                    if(tme.dwFlags != TME_LEAVE)
+                    {
+                        tme.cbSize = sizeof(tme);
+                        tme.dwFlags = TME_HOVER|TME_LEAVE;
+                        tme.hwndTrack = hwnd;
+                        tme.dwHoverTime = 1;
+                        TrackMouseEvent(&tme);
+                    }
                 }
 
                 return 0;
@@ -310,7 +314,14 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     win->win_callback(win, &event, win->userdata);
                 }
 
-                win->win32.hover = (uMsg == WM_MOUSEHOVER ? 1 : 0);
+                {
+                    TRACKMOUSEEVENT tme;
+                    tme.cbSize = sizeof(tme);
+                    tme.dwFlags = uMsg == WM_MOUSEHOVER ? TME_LEAVE : TME_HOVER;
+                    tme.hwndTrack = hwnd;
+                    tme.dwHoverTime = 1;
+                    TrackMouseEvent(&tme);
+                }
 
                 return 0;
 
