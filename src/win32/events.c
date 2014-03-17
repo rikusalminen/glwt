@@ -364,6 +364,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
                 return 0;
 
+            case WM_SYSCHAR:
             case WM_CHAR:
                 if(win->win_callback)
                 {
