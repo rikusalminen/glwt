@@ -167,10 +167,10 @@ static unsigned int utf16_decode(unsigned int utf16)
     unsigned short lo = utf16 & 0xFFFF;
     unsigned short hi = (utf16 & 0xFFFF0000) >> 16;
 
-    if(lo < 0xD8000 || lo > 0xDFFF) return lo;
+    if(lo < 0xD800 || lo > 0xDFFF) return lo;
     else if(lo < 0xD800 || lo > 0xDBFF) return 0;
     else if(hi < 0xDC00 || hi > 0xDFFF) return 0;
-    else return ((lo & 0x3FF) << 10) | (hi & 0x3FF) + 0x10000;
+    else return (((lo & 0x3FF) << 10) | (hi & 0x3FF)) + 0x10000;
 }
 
 LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
