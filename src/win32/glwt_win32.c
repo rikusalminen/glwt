@@ -61,7 +61,10 @@ int glwtInit(
 
     glwt.win32.classatom = RegisterClassExW(&klass);
     if(!glwt.win32.classatom)
+    {
         glwtWin32Error("RegisterWindowClassExW failed");
+        goto error;
+    }
 
     glwt.win32.dummy_hwnd = CreateWindowExW(
         0,
@@ -79,7 +82,7 @@ int glwtInit(
     if(!glwt.win32.dummy_hdc)
     {
         glwtWin32Error("GetDC failed");
-        return -1;
+        goto error;
     }
 
     memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
