@@ -7,7 +7,6 @@ GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
     GLWTWindow *share,
-    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
     void *userdata)
 {
     PIXELFORMATDESCRIPTOR pfd;
@@ -20,7 +19,6 @@ GLWTWindow *glwtWindowCreate(
     if(!(win = calloc(1, sizeof(struct GLWTWindow))))
         return 0;
 
-    win->win_callback = win_callback;
     win->userdata = userdata;
 
     rect.left = rect.top = 0;

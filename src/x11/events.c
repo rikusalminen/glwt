@@ -196,48 +196,49 @@ static int xlib_handle_event()
         switch(event.type)
         {
             case ConfigureNotify:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
                     e.type = GLWT_WINDOW_RESIZE;
                     e.resize.width = event.xconfigure.width;
                     e.resize.height = event.xconfigure.height;
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case MapNotify:
             case UnmapNotify:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
                     e.type = event.type == MapNotify ? GLWT_WINDOW_SHOW : GLWT_WINDOW_HIDE;
                     e.dummy.dummy  = 0;
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case Expose:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
                     e.type = GLWT_WINDOW_EXPOSE;
                     e.dummy.dummy = 0;
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case KeyPress:
             case KeyRelease:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
-                    e.type = event.type == KeyPress ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP;
+                    e.type = event.type == KeyPress ?
+                        GLWT_KEY_PRESS : GLWT_KEY_RELEASE;
                     e.key.keysym = translate_key(XkbKeycodeToKeysym(glwt.x11.display, event.xkey.keycode, 0, 0));
                     e.key.scancode = event.xkey.keycode;
                     e.key.mod = mapKeyMod(event.xkey.state);
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
 
                 if(event.type == KeyPress && !XFilterEvent(&event, None))
@@ -261,65 +262,66 @@ static int xlib_handle_event()
                         return -1;
                     }
 
-                    if(win->win_callback &&
+                    if(glwt.event_callback &&
                         (status == XLookupBoth || status == XLookupChars))
                     {
-                        GLWTWindowEvent e;
+                        GLWTEvent e;
                         e.window = win;
-                        e.type = GLWT_WINDOW_CHARACTER_INPUT;
+                        e.type = GLWT_CHARACTER_INPUT;
                         e.character.unicode = decode_utf8((unsigned char*)buffer, len);
 
-                        win->win_callback(win, &e, win->userdata);
+                        glwt.event_callback(&e);
                     }
                 }
 
                 break;
             case FocusIn:
             case FocusOut:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
                     e.type = event.type == FocusIn ? GLWT_WINDOW_FOCUS_IN : GLWT_WINDOW_FOCUS_OUT;
                     e.dummy.dummy = 0;
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case ButtonPress:
             case ButtonRelease:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
-                    e.type = event.type == ButtonPress ? GLWT_WINDOW_BUTTON_DOWN : GLWT_WINDOW_BUTTON_UP;
+                    e.type = event.type == ButtonPress ?
+                        GLWT_BUTTON_PRESS : GLWT_BUTTON_RELEASE;
                     e.button.x = event.xbutton.x;
                     e.button.y = event.xbutton.y;
                     e.button.button = event.xbutton.button; // todo: make these consistent on different platforms
                     e.button.mod = mapKeyMod(event.xbutton.state);
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case MotionNotify:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
-                    e.type = GLWT_WINDOW_MOUSE_MOTION;
+                    e.type = GLWT_MOUSE_MOTION;
                     e.motion.x = event.xmotion.x;
                     e.motion.y = event.xmotion.y;
                     e.motion.buttons = mapButtons(event.xmotion.state);
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case EnterNotify:
             case LeaveNotify:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent e;
+                    GLWTEvent e;
                     e.window = win;
                     e.type = event.type == EnterNotify ? GLWT_WINDOW_MOUSE_ENTER : GLWT_WINDOW_MOUSE_LEAVE;
                     e.dummy.dummy = 0;
-                    win->win_callback(win, &e, win->userdata);
+                    glwt.event_callback(&e);
                 }
                 break;
             case ClientMessage:
@@ -327,13 +329,13 @@ static int xlib_handle_event()
                 {
                     win->closed = 1;
 
-                    if(win->win_callback)
+                    if(glwt.event_callback)
                     {
-                        GLWTWindowEvent e;
+                        GLWTEvent e;
                         e.window = win;
                         e.type = GLWT_WINDOW_CLOSE;
                         e.dummy.dummy = 0;
-                        win->win_callback(win, &e, win->userdata);
+                        glwt.event_callback(&e);
                     }
                 } else if((Atom)event.xclient.data.l[0] == glwt.x11.atoms._NET_WM_PING)
                 {

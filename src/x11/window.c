@@ -7,14 +7,12 @@ GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
     GLWTWindow *share,
-    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
     void *userdata)
 {
     GLWTWindow *win = calloc(1, sizeof(GLWTWindow));
     if(!win)
         return 0;
 
-    win->win_callback = win_callback;
     win->userdata = userdata;
 
     XSetWindowAttributes attrib;

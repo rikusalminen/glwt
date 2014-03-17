@@ -32,7 +32,7 @@ int glwtErrorPrintf(const char *fmt, ...)
     va_end(ap);
 
     if(glwt.error_callback)
-        glwt.error_callback(buffer, glwt.userdata);
+        glwt.error_callback(buffer);
     else
         fprintf(stderr, "%s\n", buffer);
 
@@ -42,4 +42,9 @@ int glwtErrorPrintf(const char *fmt, ...)
 int glwtWindowClosed(GLWTWindow *window)
 {
     return window->closed;
+}
+
+void *glwtWindowGetPtr(GLWTWindow *window)
+{
+    return window->userdata;
 }

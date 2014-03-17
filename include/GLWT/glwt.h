@@ -29,8 +29,8 @@ typedef struct GLWTConfig
 
 typedef struct GLWTWindow GLWTWindow;
 
-typedef enum GLWTWindowEventType {
-    GLWT_WINDOW_NO_EVENT = 0,
+typedef enum GLWTEventType {
+    GLWT_NO_EVENT = 0,
     GLWT_WINDOW_CLOSE,
     GLWT_WINDOW_EXPOSE,
     GLWT_WINDOW_RESIZE,
@@ -38,21 +38,21 @@ typedef enum GLWTWindowEventType {
     GLWT_WINDOW_HIDE,
     GLWT_WINDOW_FOCUS_IN,
     GLWT_WINDOW_FOCUS_OUT,
-    GLWT_WINDOW_KEY_UP,
-    GLWT_WINDOW_KEY_DOWN,
-    GLWT_WINDOW_BUTTON_UP,
-    GLWT_WINDOW_BUTTON_DOWN,
-    GLWT_WINDOW_MOUSE_MOTION,
     GLWT_WINDOW_MOUSE_ENTER,
     GLWT_WINDOW_MOUSE_LEAVE,
-    GLWT_WINDOW_CHARACTER_INPUT,
-} GLWTWindowEventType;
+    GLWT_KEY_RELEASE,
+    GLWT_KEY_PRESS,
+    GLWT_BUTTON_RELEASE,
+    GLWT_BUTTON_PRESS,
+    GLWT_MOUSE_MOTION,
+    GLWT_CHARACTER_INPUT,
+} GLWTEventType;
 
-typedef struct GLWTWindowEvent
+typedef struct GLWTEvent
 {
     GLWTWindow *window;
 
-    GLWTWindowEventType type;
+    GLWTEventType type;
 
     union {
         struct { int width, height; } resize;
@@ -62,12 +62,12 @@ typedef struct GLWTWindowEvent
         struct { unsigned int unicode; } character;
         struct { int dummy; } dummy;
     };
-} GLWTWindowEvent;
+} GLWTEvent;
 
 int glwtInit(
     const GLWTConfig *config,
-    void (*error_callback)(const char *msg, void *userdata),
-    void *userdata
+    void (*event_callback)(const GLWTEvent *event),
+    void (*error_callback)(const char *msg)
     );
 void glwtQuit();
 
@@ -75,10 +75,10 @@ GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
     GLWTWindow *share,
-    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
     void *userdata
     );
 void glwtWindowDestroy(GLWTWindow *window);
+void *glwtWindowGetPtr(GLWTWindow *window);
 
 int glwtWindowClosed(GLWTWindow *window);
 void glwtWindowShow(GLWTWindow *window, int show);

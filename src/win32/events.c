@@ -182,13 +182,13 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         switch(uMsg)
         {
             case WM_PAINT:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
                     event.type = GLWT_WINDOW_EXPOSE;
                     event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 ValidateRect(hwnd, NULL);
@@ -198,15 +198,16 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             case WM_KEYDOWN:
             case WM_SYSKEYUP:
             case WM_SYSKEYDOWN:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
-                    event.type = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN) ? GLWT_WINDOW_KEY_DOWN : GLWT_WINDOW_KEY_UP;
+                    event.type = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN) ?
+                        GLWT_KEY_PRESS : GLWT_KEY_RELEASE;
                     event.key.keysym = translate_key(wParam, lParam);
                     event.key.scancode = (lParam >> 16) & 0xff;
                     event.key.mod = GetModifiers();
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 if(uMsg == WM_SYSKEYUP || uMsg == WM_SYSKEYDOWN)
@@ -223,9 +224,9 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             case WM_XBUTTONDOWN:
             case WM_MOUSEWHEEL:
             case WM_MOUSEHWHEEL:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
 
                     event.window = win;
                     event.type = (
@@ -235,7 +236,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                         uMsg == WM_XBUTTONUP ||
                         uMsg == WM_MOUSEWHEEL ||
                         uMsg == WM_MOUSEHWHEEL
-                        ) ? GLWT_WINDOW_BUTTON_DOWN : GLWT_WINDOW_BUTTON_UP;
+                        ) ? GLWT_BUTTON_PRESS : GLWT_BUTTON_RELEASE;
                     event.button.x = LOWORD(lParam);
                     event.button.y = HIWORD(lParam);
                     event.button.button =
@@ -248,18 +249,18 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                         0;
 
                     event.button.mod = GetModifiers();
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;
 
             case WM_MOUSEMOVE:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
 
                     event.window = win;
-                    event.type = GLWT_WINDOW_MOUSE_MOTION;
+                    event.type = GLWT_MOUSE_MOTION;
                     event.motion.x = GET_X_LPARAM(lParam);
                     event.motion.y = GET_Y_LPARAM(lParam);
                     event.motion.buttons  =
@@ -268,7 +269,7 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                         (wParam & MK_MBUTTON  ? (1 << 2) : 0) |
                         (wParam & MK_XBUTTON1 ? (1 << 5) : 0) |
                         (wParam & MK_XBUTTON2 ? (1 << 6) : 0);
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 {
@@ -292,26 +293,28 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
             case WM_SETFOCUS:
             case WM_KILLFOCUS:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
-                    event.type = uMsg == WM_SETFOCUS ? GLWT_WINDOW_FOCUS_IN : GLWT_WINDOW_FOCUS_OUT;
+                    event.type = uMsg == WM_SETFOCUS ?
+                        GLWT_WINDOW_FOCUS_IN : GLWT_WINDOW_FOCUS_OUT;
                     event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;
 
             case WM_MOUSEHOVER:
             case WM_MOUSELEAVE:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
-                    event.type = (uMsg == WM_MOUSEHOVER ? GLWT_WINDOW_MOUSE_ENTER : GLWT_WINDOW_MOUSE_LEAVE);
+                    event.type = uMsg == WM_MOUSEHOVER ?
+                        GLWT_WINDOW_MOUSE_ENTER : GLWT_WINDOW_MOUSE_LEAVE;
                     event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 {
@@ -326,26 +329,27 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 return 0;
 
             case WM_SHOWWINDOW:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
-                    event.type = (wParam == TRUE ? GLWT_WINDOW_SHOW : GLWT_WINDOW_HIDE);
+                    event.type = wParam == TRUE ?
+                        GLWT_WINDOW_SHOW : GLWT_WINDOW_HIDE;
                     event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;
 
             case WM_SIZE:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
                     event.type = GLWT_WINDOW_RESIZE;
                     event.resize.width = LOWORD(lParam);
                     event.resize.height = HIWORD(lParam);
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;
@@ -353,27 +357,27 @@ LRESULT CALLBACK glwtWin32WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             case WM_CLOSE:
                 win->closed = 1;
 
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
                     event.type = GLWT_WINDOW_CLOSE;
                     event.dummy.dummy = 0;
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;
 
             case WM_SYSCHAR:
             case WM_CHAR:
-                if(win->win_callback)
+                if(glwt.event_callback)
                 {
-                    GLWTWindowEvent event;
+                    GLWTEvent event;
                     event.window = win;
-                    event.type = GLWT_WINDOW_CHARACTER_INPUT;
+                    event.type = GLWT_CHARACTER_INPUT;
                     event.character.unicode = utf16_decode((unsigned int)wParam);
 
-                    win->win_callback(win, &event, win->userdata);
+                    glwt.event_callback(&event);
                 }
 
                 return 0;

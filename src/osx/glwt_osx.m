@@ -66,13 +66,14 @@ static int createPixelFormat(const GLWTConfig *config)
     return 0;
 }
 
-int glwtInit(const GLWTConfig *config,
-             void (*error_callback)(const char *msg, void *userdata),
-             void *userdata)
+int glwtInit(
+    const GLWTConfig *config,
+    void (*event_callback)(const GLWTEvent *event),
+    void (*error_callback)(const char *msg))
 {
     BOOL nibLoaded = NO;
+    glwt.event_callback = event_callback;
     glwt.error_callback = error_callback;
-    glwt.userdata = userdata;
 
     if(createPixelFormat(config) < 0)
         return -1;

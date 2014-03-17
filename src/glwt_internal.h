@@ -31,8 +31,8 @@ extern "C" {
 
 struct glwt
 {
-    void (*error_callback)(const char *msg, void *userdata);
-    void *userdata;
+    void (*event_callback)(const GLWTEvent *event);
+    void (*error_callback)(const char *msg);
 
     int api;
     int api_version_major, api_version_minor;
@@ -61,7 +61,6 @@ extern struct glwt glwt;
 
 struct GLWTWindow
 {
-    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata);
     void *userdata;
     int closed;
 

@@ -38,16 +38,13 @@ static int encode_utf8(unsigned int codepoint, unsigned char *out)
     return 0;
 }
 
-static void error_callback(const char *msg, void *userdata)
+static void error_callback(const char *msg)
 {
-    (void)userdata;
     fprintf(stderr, "%s\n", msg);
 }
 
-static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata)
+static void event_callback(const GLWTEvent *event)
 {
-    (void)userdata;
-
     switch(event->type)
     {
         case GLWT_WINDOW_CLOSE:
@@ -56,14 +53,14 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
         case GLWT_WINDOW_EXPOSE:
             printf("Window exposed\n");
             {
-                glwtMakeCurrent(window);
-                glwtSwapInterval(window, 1);
+                glwtMakeCurrent(event->window);
+                glwtSwapInterval(event->window, 1);
 
                 glxwInit();
 
                 glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
-                glwtSwapBuffers(window);
+                glwtSwapBuffers(event->window);
 
                 glwtMakeCurrent(NULL);
             }
@@ -79,27 +76,27 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
         case GLWT_WINDOW_FOCUS_OUT:
             printf("Window focus %s\n", (event->type == GLWT_WINDOW_FOCUS_IN) ? "in" : "out");
             break;
-        case GLWT_WINDOW_KEY_UP:
-        case GLWT_WINDOW_KEY_DOWN:
-            printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n",
-                (event->type == GLWT_WINDOW_KEY_DOWN) ? "down" : "up",
-                event->key.keysym, event->key.scancode, event->key.mod);
-            break;
-        case GLWT_WINDOW_BUTTON_UP:
-        case GLWT_WINDOW_BUTTON_DOWN:
-            printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n",
-                (event->type == GLWT_WINDOW_BUTTON_DOWN) ? "down" : "up",
-                event->button.x, event->button.y, event->button.button, event->button.mod);
-            break;
-        case GLWT_WINDOW_MOUSE_MOTION:
-            printf("Motion  x: %d  y: %d  buttons: %X\n",
-                event->motion.x, event->motion.y, event->motion.buttons);
-            break;
         case GLWT_WINDOW_MOUSE_ENTER:
         case GLWT_WINDOW_MOUSE_LEAVE:
             printf("Mouse %s\n", (event->type == GLWT_WINDOW_MOUSE_ENTER) ? "enter" : "leave");
             break;
-        case GLWT_WINDOW_CHARACTER_INPUT:
+        case GLWT_KEY_RELEASE:
+        case GLWT_KEY_PRESS:
+            printf("Key %s  keysym: 0x%x  scancode: %d  mod: %X\n",
+                (event->type == GLWT_KEY_PRESS) ? "press" : "release",
+                event->key.keysym, event->key.scancode, event->key.mod);
+            break;
+        case GLWT_BUTTON_RELEASE:
+        case GLWT_BUTTON_PRESS:
+            printf("Button %s  x: %d  y: %d  button: %d  mod: %X\n",
+                (event->type == GLWT_BUTTON_PRESS) ? "press" : "release",
+                event->button.x, event->button.y, event->button.button, event->button.mod);
+            break;
+        case GLWT_MOUSE_MOTION:
+            printf("Motion  x: %d  y: %d  buttons: %X\n",
+                event->motion.x, event->motion.y, event->motion.buttons);
+            break;
+        case GLWT_CHARACTER_INPUT:
             printf("Character input 0x%x (%c)\n",
                 event->character.unicode,
                 (event->character.unicode < 128 && isprint(event->character.unicode)) ?
@@ -112,7 +109,7 @@ static void window_callback(GLWTWindow *window, const GLWTWindowEvent *event, vo
                 bytes = encode_utf8(event->character.unicode, (unsigned char*)buf);
                 buf[bytes] = 0;
 
-                glwtWindowSetTitle(window, buf);
+                glwtWindowSetTitle(event->window, buf);
             }
 
             break;
@@ -140,10 +137,10 @@ int main(int argc, char *argv[])
 
     (void)argc; (void)argv;
 
-    if(glwtInit(&glwt_config, error_callback, NULL) != 0)
+    if(glwtInit(&glwt_config, event_callback, error_callback) != 0)
         goto error;
 
-    if(!(window = glwtWindowCreate("", 400, 300, NULL, window_callback, NULL)))
+    if(!(window = glwtWindowCreate("", 400, 300, NULL, NULL)))
         goto error;
 
     glwtWindowSetTitle(window, "GLWT Events test");

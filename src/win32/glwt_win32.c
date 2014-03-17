@@ -28,16 +28,16 @@ void glwtWin32Error(const char *msg)
 
 int glwtInit(
     const GLWTConfig *config,
-    void (*error_callback)(const char *msg, void *userdata),
-    void *userdata)
+    void (*event_callback)(const GLWTEvent *event),
+    void (*error_callback)(const char *msg))
 {
     WCHAR klassname[] = { 'G', 'L', 'W', 'T', 0 };
     int fmt;
     WNDCLASSEXW klass;
     PIXELFORMATDESCRIPTOR pfd;
 
+    glwt.event_callback = event_callback;
     glwt.error_callback = error_callback;
-    glwt.userdata = userdata;
 
     glwt.win32.hinstance = GetModuleHandle(0);
     if(!glwt.win32.hinstance)

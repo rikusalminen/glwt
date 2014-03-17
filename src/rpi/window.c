@@ -5,7 +5,6 @@ GLWTWindow *glwtWindowCreate(
     const char *title,
     int width, int height,
     GLWTWindow *share,
-    void (*win_callback)(GLWTWindow *window, const GLWTWindowEvent *event, void *userdata),
     void *userdata)
 {
     (void)title;
@@ -14,7 +13,6 @@ GLWTWindow *glwtWindowCreate(
     if(!win)
         return 0;
 
-    win->win_callback = win_callback;
     win->userdata = userdata;
 
     DISPMANX_UPDATE_HANDLE_T dispman_update;
