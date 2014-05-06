@@ -14,19 +14,18 @@ static int createPixelFormat(const GLWTConfig *config)
     }
 
     if(config &&
-       config->api_version_major == 3 &&
-       (config->api & GLWT_PROFILE_MASK) != GLWT_PROFILE_CORE)
+       config->api_version_major >= 3 &&
+       (config->api & GLWT_PROFILE_COMPATIBILITY) == GLWT_PROFILE_COMPATIBILITY)
     {
-        glwtErrorPrintf("OSX only supports Core profile for OpenGL 3.2 contexts");
+        glwtErrorPrintf("OS X does not support compatibility contexts");
         return -1;
     }
 
     if (config &&
-        ((config->api_version_major == 3 && config->api_version_minor != 2) ||
-        config->api_version_major > 3))
+        (config->api_version_major == 3 && config->api_version_minor < 2))
     {
-        glwtErrorPrintf("OSX only supports OpenGL versions up to 2.1 "
-                        "and 3.2 Core profile");
+        glwtErrorPrintf("OS X only supports legacy OpenGL versions up to 2.1 "
+                        "and Core profile contexts starting from version 3.2");
         return -1;
     }
 
@@ -39,9 +38,7 @@ static int createPixelFormat(const GLWTConfig *config)
     if(config)
     {
         colorBits = config->red_bits + config->green_bits + config->blue_bits;
-        core = (config->api_version_major == 3 &&
-                (config->api & GLWT_PROFILE_MASK) == GLWT_PROFILE_CORE) ||
-                (config->api_version_major == 0);
+        core = (config->api_version_major >= 3) || (config->api_version_major == 0);
     }
 
     NSOpenGLPixelFormatAttribute attribs[] = {
