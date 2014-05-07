@@ -13,6 +13,7 @@
 static int convertKeysym(unsigned int keyCode)
 {
     // Keyboard symbol translation table
+    // adapted from GLFW ( http://www.glfw.org/ )
     static const unsigned int table[128] =
     {
         /* 00 */ GLWT_KEY_A,
@@ -65,7 +66,7 @@ static int convertKeysym(unsigned int keyCode)
         /* 2f */ GLWT_KEY_PERIOD,
         /* 30 */ GLWT_KEY_TAB,
         /* 31 */ GLWT_KEY_SPACE,
-        /* 32 */ GLWT_KEY_UNKNOWN,
+        /* 32 */ GLWT_KEY_UNKNOWN, // grave accent
         /* 33 */ GLWT_KEY_BACKSPACE,
         /* 34 */ GLWT_KEY_UNKNOWN,
         /* 35 */ GLWT_KEY_ESCAPE,
