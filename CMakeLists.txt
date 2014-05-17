@@ -39,7 +39,8 @@ set(GLWT_DEPENDENCY_LIBRARIES)
 mark_as_advanced(GLWT_DEPENDENCY_LIBRARIES)
 add_subdirectory(src)
 
-set(GLWT_LIBRARIES ${GLWT_DEPENDENCY_LIBRARIES} glwt)
+set(GLWT_LIBRARIES ${GLWT_DEPENDENCY_LIBRARIES} glwt CACHE STRING
+    "GLWT and its dependency libraries for linking")
 mark_as_advanced(GLWT_LIBRARIES)
 
 if(GLWT_BUILD_TESTS)
